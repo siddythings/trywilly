@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { SendIcon, PaperclipIcon, SparklesIcon } from "lucide-react";
 import { X, PlusIcon } from "lucide-react"
 import ReactMarkdown from 'react-markdown';
+import { addConversation } from "@/lib/conversationsRealtime";
+import { addMessage, getMessages } from "@/lib/messagesRealtime";
 // Create a new context for the side chat
 const SideChatContext = React.createContext<{
   isOpen: boolean;
@@ -53,6 +55,8 @@ type MessageStop = {
   };
 };
 
+type RTDBMessage = { id: string; sender: string; text: string; timestamp?: number };
+
 export function useSideChat() {
   const context = React.useContext(SideChatContext);
   if (!context) {
@@ -77,9 +81,36 @@ export function SideChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [showIntegrations, setShowIntegrations] = useState(false);
+  const [chatId, setChatId] = useState<string>("default");
+
+  // On mount, load chatId from localStorage if available
+  useEffect(() => {
+    const savedId = localStorage.getItem("currentChatId");
+    if (savedId) {
+      setChatId(savedId);
+    }
+  }, []);
+
+  useEffect(() => {
+    async function fetchMessages() {
+      setIsFetching(true);
+      try {
+        const msgs = await getMessages(chatId);
+        setMessages(
+          (msgs as RTDBMessage[]).map((m) => ({ sender: m.sender, text: m.text }))
+        );
+      } catch (e) {
+        console.error("Error fetching messages from RTDB:", e);
+      } finally {
+        setIsFetching(false);
+      }
+    }
+    fetchMessages();
+  }, [chatId]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -186,6 +217,7 @@ export function SideChat() {
       setMessages(prev => [...prev, { sender: "assistant", text: "", isStreaming: true }]);
 
       let currentText = "";
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -216,6 +248,15 @@ export function SideChat() {
                 }
                 return newMessages;
               });
+
+              // Store assistant response in RTDB
+              if (currentText.trim()) {
+                try {
+                  addMessage(chatId, { sender: "assistant", text: currentText });
+                } catch (err) {
+                  console.error("Failed to save assistant message to RTDB", err);
+                }
+              }
 
               // Handle tool use if that's why the message stopped
               if (messageStop.message.stop_reason === 'tool_use') {
@@ -254,12 +295,25 @@ export function SideChat() {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
-    // Add user message to the chat
-    setMessages(prev => [...prev, { sender: "user", text: trimmed }]);
+    setMessages(prev => {
+      const updated = [...prev, { sender: "user", text: trimmed }];
+      // Call streamChat with the updated history
+      streamChat(trimmed, updated.map(msg => ({
+        role: msg.sender === "user" ? "user" : msg.sender === "assistant" ? "assistant" : "tool",
+        content: msg.text
+      })));
+      return updated;
+    });
     setInput("");
-    
-    // Stream the response with conversation history
-    await streamChat(trimmed);
+
+    // Save to Realtime Database
+    try {
+      setIsFetching(false); // Ensure loading state is cleared after first message
+      await addMessage(chatId, { sender: "user", text: trimmed });
+    } catch (err) {
+      console.error("Failed to save message to RTDB", err);
+    }
+    // No need to call streamChat here
   }
 
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -269,11 +323,27 @@ export function SideChat() {
     }
   }
 
-  function handleNewChat() {
+  async function handleNewChat() {
+    console.log("handleNewChat called");
     setMessages([]);
     setInput("");
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
+    }
+    setIsFetching(true); // Only show loader if a fetch is actually in progress
+    try {
+      console.log("Calling addConversation...");
+      const newId = await addConversation({ title: "New Chat" });
+      console.log("addConversation returned:", newId);
+      if (newId) {
+        setChatId(newId);
+        localStorage.setItem("currentChatId", newId);
+        console.log("New conversation created with id:", newId);
+      } else {
+        console.error("addConversation did not return an ID");
+      }
+    } catch (e) {
+      console.error("Failed to create conversation:", e);
     }
   }
 
@@ -309,45 +379,61 @@ export function SideChat() {
 
       {/* Chat messages */}
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={
-              msg.sender === "user"
-                ? "flex justify-end"
-                : "flex justify-start"
-            }
-          >
+        {isFetching && chatId ? (
+          <div className="flex justify-center items-center py-8">
+            <span className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></span>
+          </div>
+        ) : messages.length === 0 && !isFetching ? null : (
+          messages.map((msg, i) => (
             <div
+              key={i}
               className={
-                "max-w-[75%] px-4 py-2 rounded-2xl text-sm " +
-                (msg.sender === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-sm"
-                  : "bg-muted border text-foreground rounded-bl-sm shadow-sm") +
-                (msg.isStreaming ? " animate-pulse" : "")
+                msg.sender === "user"
+                  ? "flex justify-end"
+                  : "flex justify-start"
               }
             >
-              {msg.sender === "user" ? (
-                msg.text
-              ) : (
-                <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <ReactMarkdown 
-                    components={{
-                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                      ul: ({ children }) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
-                      ol: ({ children }) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
-                      li: ({ children }) => <li className="mb-1">{children}</li>,
-                      code: ({ children }) => <code className="bg-muted px-1 py-0.5 rounded text-sm">{children}</code>,
-                      pre: ({ children }) => <pre className="bg-muted p-2 rounded-lg mb-2 overflow-x-auto">{children}</pre>,
-                    }}
-                  >
-                    {msg.text || (msg.isStreaming ? "..." : "")}
-                  </ReactMarkdown>
-                </div>
-              )}
+              <div
+                className={
+                  "max-w-[75%] px-4 py-2 rounded-2xl text-sm " +
+                  (msg.sender === "user"
+                    ? "bg-primary text-primary-foreground rounded-br-sm"
+                    : "bg-muted border text-foreground rounded-bl-sm shadow-sm") +
+                  (msg.isStreaming ? " animate-pulse" : "")
+                }
+              >
+                {msg.sender === "user" ? (
+                  msg.text
+                ) : (
+                  <div className="prose prose-sm dark:prose-invert max-w-none">
+                    <ReactMarkdown 
+                      components={{
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
+                        li: ({ children }) => <li className="mb-1">{children}</li>,
+                        code: ({ children }) => <code className="bg-muted px-1 py-0.5 rounded text-sm">{children}</code>,
+                        pre: ({ children }) => <pre className="bg-muted p-2 rounded-lg mb-2 overflow-x-auto">{children}</pre>,
+                      }}
+                    >
+                      {msg.text || (msg.isStreaming ? "..." : "")}
+                    </ReactMarkdown>
+                  </div>
+                )}
+              </div>
             </div>
+          ))
+        )}
+        {/* Show empty state only after loading and if there are no messages */}
+        {/* {!isFetching && messages.length === 0 && (
+          <div className="text-center text-muted-foreground py-8">No messages yet. Start the conversation!</div>
+        )} */}
+        {/* Loader for assistant response */}
+        {isLoading && !isFetching && (
+          <div className="flex justify-center items-center py-4">
+            <span className="inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin"></span>
           </div>
-        ))}
+        )}
         <div ref={chatEndRef} />
       </div>
 
