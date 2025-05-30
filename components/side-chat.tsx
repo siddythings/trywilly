@@ -79,6 +79,7 @@ export function SideChat() {
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [showIntegrations, setShowIntegrations] = useState(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -412,7 +413,15 @@ export function SideChat() {
               <Button variant="ghost" size="icon" type="button" className="size-6 p-0">
                 <SparklesIcon className="w-4 h-4" />
               </Button>
-              <Button variant="link" size="sm" className="p-0 h-auto text-xs">+ Add integrations</Button>
+              <Button 
+                variant="link" 
+                size="sm" 
+                className="p-0 h-auto text-xs" 
+                type="button"
+                onClick={() => setShowIntegrations(true)}
+              >
+                + Add integrations
+              </Button>
             </div>
             <Button 
               type="submit" 
@@ -426,6 +435,73 @@ export function SideChat() {
           </div>
         </div>
       </form>
+      {/* Integrations Modal */}
+      <IntegrationsModal open={showIntegrations} onClose={() => setShowIntegrations(false)} />
     </SidebarInset>
+  );
+}
+
+// Modal component for integrations
+function IntegrationsModal({ open, onClose }: { open: boolean, onClose: () => void }) {
+  if (!open) return null;
+
+  // Sample integrations data
+  const integrations = [
+    { name: 'Gmail', icon: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.png', connected: true },
+    { name: 'Google Calendar', icon: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg', connected: false },
+    { name: 'Notion', icon: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png', connected: false },
+    { name: 'Airtable', icon: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Airtable_Logo.png', connected: false },
+    { name: 'Linear', icon: 'https://avatars.githubusercontent.com/u/53991441?s=200&v=4', connected: false },
+    { name: 'Google Sheets', icon: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Google_Sheets_logo_%282014-2020%29.png', connected: false },
+    { name: 'Stripe', icon: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Stripe_Logo%2C_revised_2016.png', connected: false },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div className="bg-popover text-popover-foreground rounded-2xl shadow-2xl w-full max-w-lg p-0 relative flex flex-col border border-border">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+          <h2 className="text-lg font-semibold text-foreground">Add integrations</h2>
+          <button
+            className="text-muted-foreground hover:text-foreground text-2xl font-bold"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        {/* Search input */}
+        <div className="px-6 pb-2">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-full rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
+          />
+        </div>
+        {/* Integrations list */}
+        <div className="flex-1 overflow-y-auto px-6 pb-4">
+          {integrations.map((integration) => (
+            <div key={integration.name} className="flex items-center bg-card rounded-lg border border-border mb-3 px-3 py-2 shadow-sm">
+              <img src={integration.icon} alt={integration.name} className="w-7 h-7 rounded mr-3 object-contain" />
+              <span className="flex-1 text-base font-medium text-foreground">{integration.name}</span>
+              {integration.connected ? (
+                <button className="bg-muted text-foreground border border-border rounded px-3 py-1 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition">Disconnect</button>
+              ) : (
+                <button className="bg-primary text-primary-foreground rounded px-3 py-1 text-sm font-medium hover:bg-primary/90 transition">Connect</button>
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Footer */}
+        <div className="flex justify-end px-6 pb-4">
+          <button
+            className="bg-muted text-foreground border border-border rounded px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   );
 } 
