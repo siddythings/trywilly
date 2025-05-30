@@ -306,37 +306,6 @@ export function SideChat() {
         </div>
       </header>
 
-      {/* Suggested actions and Recent chats: only show if no user message */}
-      {!hasUserMessage && (
-        <>
-          {/* Suggested actions */}
-          <div className="px-4 pt-4">
-            <div className="text-xs font-semibold text-muted-foreground mb-2">Suggested</div>
-            <div className="flex flex-col gap-2 mb-4">
-              {suggested.map((s, i) => (
-                <Button key={i} variant="ghost" className="justify-start gap-2 px-2 py-1 text-sm">
-                  {s.icon}
-                  {s.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Recent chats */}
-          <div className="px-4">
-            <div className="text-xs font-semibold text-muted-foreground mb-2">Recent chats</div>
-            <div className="flex flex-col gap-1 mb-2">
-              {recent.map((r, i) => (
-                <div key={i} className="flex items-center justify-between rounded px-2 py-1 hover:bg-accent cursor-pointer">
-                  <span className="truncate text-sm">{r.title}</span>
-                  <span className="text-xs text-muted-foreground ml-2 whitespace-nowrap">{r.time}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-
       {/* Chat messages */}
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
         {messages.map((msg, i) => (
@@ -381,6 +350,37 @@ export function SideChat() {
         <div ref={chatEndRef} />
       </div>
 
+      {/* Suggested actions and Recent chats: only show if no user message */}
+      {!hasUserMessage && (
+        <>
+          {/* Suggested actions */}
+          <div className="px-4 pt-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2">Suggested</div>
+            <div className="flex flex-col gap-2 mb-4">
+              {suggested.map((s, i) => (
+                <Button key={i} variant="ghost" className="justify-start gap-2 px-2 py-1 text-sm">
+                  {s.icon}
+                  {s.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Recent chats */}
+          <div className="px-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2">Recent chats</div>
+            <div className="flex flex-col gap-1 mb-2">
+              {recent.map((r, i) => (
+                <div key={i} className="flex items-center justify-between rounded px-2 py-1 hover:bg-accent cursor-pointer">
+                  <span className="truncate text-sm">{r.title}</span>
+                  <span className="text-xs text-muted-foreground ml-2 whitespace-nowrap">{r.time}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Input area */}
       <form className="sticky bottom-0 left-0 w-full border-t px-4 pt-3 pb-2 z-10" onSubmit={handleSend}>
         <div className="rounded-xl border shadow bg-background p-4 flex flex-col gap-2">
@@ -388,7 +388,7 @@ export function SideChat() {
           <textarea
             rows={1}
             placeholder="Type @ to mention anything"
-            className="w-full resize-none border-0 bg-transparent focus:ring-0 text-base placeholder:text-muted-foreground p-0 mb-1"
+            className="w-full resize-none border-0 bg-transparent focus:outline-none focus:ring-0 focus:border-transparent text-base placeholder:text-muted-foreground p-0 mb-1"
             style={{ minHeight: '28px', maxHeight: '80px' }}
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -417,10 +417,11 @@ export function SideChat() {
             <Button 
               type="submit" 
               size="icon" 
-              className="size-7 p-0 text-primary"
+              variant="ghost"
+              className="size-7 p-0 bg-black text-white"
               disabled={isLoading || !input.trim()}
             >
-              <SendIcon className="w-5 h-5" />
+              <SendIcon className="w-5 h-5 text-white" />
             </Button>
           </div>
         </div>
