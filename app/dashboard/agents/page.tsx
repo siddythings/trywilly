@@ -218,8 +218,8 @@ export default function AgentsPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {agentTemplates
                       .filter((agent) => agent.categories.includes(cat))
-                      .map((agent) => (
-                        <Card key={agent.title} className="relative h-full p-3 rounded-md border border-muted shadow-sm flex flex-col justify-between min-h-[140px]">
+                      .map((agent, idx) => (
+                        <Card key={agent.title + idx} className="relative h-full p-3 rounded-md border border-muted shadow-sm flex flex-col justify-between min-h-[140px]">
                           {/* Top: Title, description, external link */}
                           <div className="flex flex-row items-start justify-between gap-2">
                             <div className="flex-1">
