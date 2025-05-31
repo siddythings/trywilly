@@ -58,7 +58,7 @@ export default function NewAgentPage() {
           throttleDelay={3000}
           className={cn("h-96 w-full rounded-xl")}
           editorContentClassName="overflow-auto h-full"
-          output="json"
+          output="text"
           onChange={(value) => {
             console.log(value)
           }}
