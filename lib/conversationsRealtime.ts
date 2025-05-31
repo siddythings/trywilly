@@ -7,10 +7,12 @@ type ConversationValue = { title?: unknown; createdAt?: unknown };
 // Add a new conversation
 export async function addConversation(conversation: { title: string; createdAt?: number }) {
   const conversationsRef = ref(rtdb, "conversations");
-  const newConvRef = push(conversationsRef, {
+  const value = {
     ...conversation,
     createdAt: conversation.createdAt || Date.now(),
-  });
+  };
+  console.log("Pushing conversation to RTDB:", value);
+  const newConvRef = await push(conversationsRef, value);
   return newConvRef.key;
 }
 

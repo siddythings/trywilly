@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SendIcon, PaperclipIcon, SparklesIcon } from "lucide-react";
 import { X, PlusIcon } from "lucide-react"
 import ReactMarkdown from 'react-markdown';
-import { addConversation } from "@/lib/conversationsRealtime";
+import { addConversation, getConversations, Conversation } from "@/lib/conversationsRealtime";
 import { addMessage, getMessages } from "@/lib/messagesRealtime";
 // Create a new context for the side chat
 const SideChatContext = React.createContext<{
@@ -12,8 +12,8 @@ const SideChatContext = React.createContext<{
   toggle: () => void;
 } | null>(null);
 
-type ChatMessage = { 
-  sender: string; 
+type ChatMessage = {
+  sender: string;
   text: string;
   isStreaming?: boolean;
 };
@@ -86,6 +86,8 @@ export function SideChat() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const [showIntegrations, setShowIntegrations] = useState(false);
   const [chatId, setChatId] = useState<string>("default");
+  const [recentChats, setRecentChats] = useState<Conversation[]>([]);
+  const [isRecentLoading, setIsRecentLoading] = useState(false);
 
   // On mount, load chatId from localStorage if available
   useEffect(() => {
@@ -116,6 +118,24 @@ export function SideChat() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Fetch recent chats on mount
+  useEffect(() => {
+    async function fetchRecentChats() {
+      setIsRecentLoading(true);
+      try {
+        const conversations = await getConversations();
+        // Sort by createdAt descending and take the most recent 5
+        const sorted = conversations.sort((a, b) => b.createdAt - a.createdAt).slice(0, 5);
+        setRecentChats(sorted);
+      } catch (e) {
+        console.error("Error fetching recent chats:", e);
+      } finally {
+        setIsRecentLoading(false);
+      }
+    }
+    fetchRecentChats();
+  }, []);
+
   if (!isOpen) return null;
 
   // Example data for suggested actions and recent chats
@@ -123,11 +143,6 @@ export function SideChat() {
     { icon: <SparklesIcon className="w-4 h-4 text-primary" />, label: "List recent users" },
     { icon: <SparklesIcon className="w-4 h-4 text-primary" />, label: "Any failed payments?" },
     { icon: <SparklesIcon className="w-4 h-4 text-primary" />, label: "Check my tickets" },
-  ];
-  const recent = [
-    { title: "Read Last Email Aloud", time: "5h" },
-    { title: "Daily workflow management agent", time: "1d" },
-    { title: "Okay, I'm ready. Please provide the user query.", time: "1d" },
   ];
 
   // Find if there is any user message
@@ -172,14 +187,14 @@ export function SideChat() {
       await streamChat("", updatedHistory);
     } catch (error) {
       console.error('Error executing tool:', error);
-      setMessages(prev => [...prev, { 
-        sender: "assistant", 
-        text: "Sorry, there was an error executing the tool." 
+      setMessages(prev => [...prev, {
+        sender: "assistant",
+        text: "Sorry, there was an error executing the tool."
       }]);
     }
   };
 
-  const streamChat = async (userMessage: string, existingHistory?: Message[]) => {
+  const streamChat = async (userMessage: string, existingHistory?: Message[], currentChatIdOverride?: string) => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -217,7 +232,6 @@ export function SideChat() {
       setMessages(prev => [...prev, { sender: "assistant", text: "", isStreaming: true }]);
 
       let currentText = "";
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -252,7 +266,7 @@ export function SideChat() {
               // Store assistant response in RTDB
               if (currentText.trim()) {
                 try {
-                  addMessage(chatId, { sender: "assistant", text: currentText });
+                  await addMessage(currentChatIdOverride || chatId || localStorage.getItem("currentChatId") || "default", { sender: "assistant", text: currentText });
                 } catch (err) {
                   console.error("Failed to save assistant message to RTDB", err);
                 }
@@ -279,9 +293,9 @@ export function SideChat() {
         console.log('Stream aborted');
       } else {
         console.error('Error:', error);
-        setMessages(prev => [...prev, { 
-          sender: "assistant", 
-          text: "Sorry, there was an error processing your request." 
+        setMessages(prev => [...prev, {
+          sender: "assistant",
+          text: "Sorry, there was an error processing your request."
         }]);
       }
     } finally {
@@ -290,18 +304,98 @@ export function SideChat() {
     }
   };
 
+  // Helper to fetch auto title from API
+  async function fetchAutoTitle(userMessage: string): Promise<string> {
+    const TITLE_PROMPT = `Generate a concise, specific title (3-4 words max) that accurately captures the main topic or purpose of this conversation. Use key technical terms when relevant.
+                      Avoid giving title regarding the finding tools for performing a task. Just pick the title based on the user's query.
+                      Avoid generic words like 'conversation', 'chat', or 'help'.`;
+    try {
+      const response = await fetch('http://localhost:8000/chat/stream/title', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text" as const,
+                  text: `${TITLE_PROMPT} \n\n  User message: ${userMessage} \n\n Format: Only output the title, no quotes or explanation"`,
+                },
+              ],
+            },
+          ]
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to fetch title');
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('No reader available');
+      let currentText = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        console.log("done", currentText);
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split('\n').filter(line => line.trim());
+        console.log("lines", lines);
+        for (const line of lines) {
+          try {
+            const data = JSON.parse(line);
+            if (data.type === 'content_block_delta' && data.delta?.text) {
+              currentText += data.delta.text;
+              console.log("currentText", currentText);
+            }
+          } catch (e) {
+            console.error('Error parsing chunk:', e);
+          }
+        }
+      }
+      return currentText.trim() || 'New Chat';
+    } catch (e) {
+      console.error('Auto title fetch failed:', e);
+      return 'New Chat';
+    }
+  }
+
+  // Remove manual prompt from handleNewChat
+  async function handleNewChat() {
+    console.log("handleNewChat called");
+    setMessages([]);
+    setInput("");
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setIsFetching(true);
+    // Do not create conversation here; will be created on first message
+    localStorage.removeItem("currentChatId");
+    setChatId("");
+  }
+
   async function handleSend(e?: React.FormEvent | React.KeyboardEvent) {
     if (e) e.preventDefault();
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
+    let currentChatId = chatId || localStorage.getItem("currentChatId") || "";
+
+    // If this is a new conversation (no chatId or no messages yet)
+    if (!currentChatId || messages.length === 0) {
+      setIsLoading(true);
+      const autoTitle = await fetchAutoTitle(trimmed);
+      const newId = await addConversation({ title: autoTitle });
+      currentChatId = newId || "";
+      setChatId(currentChatId);
+      if (newId) localStorage.setItem("currentChatId", newId);
+      setIsLoading(false);
+    }
+
     setMessages(prev => {
       const updated = [...prev, { sender: "user", text: trimmed }];
-      // Call streamChat with the updated history
+      // Call streamChat with the updated history and correct chatId
       streamChat(trimmed, updated.map(msg => ({
         role: msg.sender === "user" ? "user" : msg.sender === "assistant" ? "assistant" : "tool",
         content: msg.text
-      })));
+      })), currentChatId);
       return updated;
     });
     setInput("");
@@ -309,7 +403,7 @@ export function SideChat() {
     // Save to Realtime Database
     try {
       setIsFetching(false); // Ensure loading state is cleared after first message
-      await addMessage(chatId, { sender: "user", text: trimmed });
+      await addMessage(currentChatId, { sender: "user", text: trimmed });
     } catch (err) {
       console.error("Failed to save message to RTDB", err);
     }
@@ -323,28 +417,20 @@ export function SideChat() {
     }
   }
 
-  async function handleNewChat() {
-    console.log("handleNewChat called");
-    setMessages([]);
-    setInput("");
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    setIsFetching(true); // Only show loader if a fetch is actually in progress
-    try {
-      console.log("Calling addConversation...");
-      const newId = await addConversation({ title: "New Chat" });
-      console.log("addConversation returned:", newId);
-      if (newId) {
-        setChatId(newId);
-        localStorage.setItem("currentChatId", newId);
-        console.log("New conversation created with id:", newId);
-      } else {
-        console.error("addConversation did not return an ID");
-      }
-    } catch (e) {
-      console.error("Failed to create conversation:", e);
-    }
+  // Helper to format relative time
+  function formatRelativeTime(timestamp: number): string {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const min = 60 * 1000;
+    const hour = 60 * min;
+    const day = 24 * hour;
+    const week = 7 * day;
+    if (diff < min) return 'Just now';
+    if (diff < hour) return `${Math.floor(diff / min)}m`;
+    if (diff < day) return `${Math.floor(diff / hour)}h`;
+    if (diff < 2 * day) return 'Yesterday';
+    if (diff < week) return 'This week';
+    return 'Last week';
   }
 
   return (
@@ -406,7 +492,7 @@ export function SideChat() {
                   msg.text
                 ) : (
                   <div className="prose prose-sm dark:prose-invert max-w-none">
-                    <ReactMarkdown 
+                    <ReactMarkdown
                       components={{
                         p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
                         ul: ({ children }) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
@@ -457,12 +543,27 @@ export function SideChat() {
           <div className="px-4">
             <div className="text-xs font-semibold text-muted-foreground mb-2">Recent chats</div>
             <div className="flex flex-col gap-1 mb-2">
-              {recent.map((r, i) => (
-                <div key={i} className="flex items-center justify-between rounded px-2 py-1 hover:bg-accent cursor-pointer">
-                  <span className="truncate text-sm">{r.title}</span>
-                  <span className="text-xs text-muted-foreground ml-2 whitespace-nowrap">{r.time}</span>
-                </div>
-              ))}
+              {isRecentLoading ? (
+                <div className="text-muted-foreground text-xs py-2">Loading recent chats...</div>
+              ) : recentChats.length === 0 ? (
+                <div className="text-muted-foreground text-xs py-2">No recent chats</div>
+              ) : (
+                recentChats.slice(0, 3).map((r) => (
+                  <div
+                    key={r.id}
+                    className="flex items-center justify-between rounded px-2 py-1 hover:bg-accent cursor-pointer"
+                    onClick={() => {
+                      setChatId(r.id);
+                      localStorage.setItem("currentChatId", r.id);
+                      setInput("");
+                      setIsFetching(true);
+                    }}
+                  >
+                    <span className="truncate text-sm">{r.title}</span>
+                    <span className="text-xs text-muted-foreground ml-2 whitespace-nowrap">{formatRelativeTime(r.createdAt)}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </>
@@ -499,19 +600,19 @@ export function SideChat() {
               <Button variant="ghost" size="icon" type="button" className="size-6 p-0">
                 <SparklesIcon className="w-4 h-4" />
               </Button>
-              <Button 
-                variant="link" 
-                size="sm" 
-                className="p-0 h-auto text-xs" 
+              <Button
+                variant="link"
+                size="sm"
+                className="p-0 h-auto text-xs"
                 type="button"
                 onClick={() => setShowIntegrations(true)}
               >
                 + Add integrations
               </Button>
             </div>
-            <Button 
-              type="submit" 
-              size="icon" 
+            <Button
+              type="submit"
+              size="icon"
               variant="ghost"
               className="size-7 p-0 bg-black text-white"
               disabled={isLoading || !input.trim()}
