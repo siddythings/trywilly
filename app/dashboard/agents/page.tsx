@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/tabs";
 import { ExternalLink, LayoutGrid, Search, AppWindowIcon } from "lucide-react";
 import { IconAppsFilled } from "@tabler/icons-react"
-
+import { useRouter } from "next/navigation";
 const agentTemplates = [
   {
     title: "Daily Calendar Summary",
@@ -167,6 +167,7 @@ const categories = [
 export default function AgentsPage() {
   const [tab, setTab] = React.useState("All");
   const [topTab, setTopTab] = React.useState("Templates");
+  const router = useRouter();
 
   return (
     <div className="container mx-auto px-8 py-10">
@@ -190,7 +191,7 @@ export default function AgentsPage() {
           </Tabs>
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             <Search className="w-5 h-5 text-muted-foreground" />
-            <Button size="lg" className="w-full sm:w-auto">
+            <Button size="lg" className="w-full sm:w-auto" onClick={() => router.push("/dashboard/agents/new")}>
               + Create new agent
             </Button>
           </div>
