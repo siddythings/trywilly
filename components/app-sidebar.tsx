@@ -17,6 +17,7 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
+  IconAppsFilled,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -41,9 +42,9 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
+      title: "Agents",
+      url: "/dashboard/agents",
+      icon: IconAppsFilled,
     },
     {
       title: "Lifecycle",
@@ -162,7 +163,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Willy</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
