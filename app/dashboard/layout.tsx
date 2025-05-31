@@ -1,0 +1,42 @@
+"use client";
+
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+import { SideChat, SideChatProvider, useSideChat } from "@/components/side-chat";
+import React from "react";
+
+function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
+  const { toggle: toggleSideChat } = useSideChat();
+
+  return (
+    <SidebarProvider
+      style={{
+        "--sidebar-width": "calc(var(--spacing) * 72)",
+        "--header-height": "calc(var(--spacing) * 12)",
+      } as React.CSSProperties}
+      className="flex h-full"
+    >
+      <AppSidebar variant="inset" />
+      <SidebarInset className="flex flex-col flex-[1.5]">
+        <SiteHeader onToggleSideChat={toggleSideChat} />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Route-specific content will be rendered here */}
+          {children}
+        </div>
+      </SidebarInset>
+      <SideChat />
+    </SidebarProvider>
+  );
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SideChatProvider>
+      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+    </SideChatProvider>
+  );
+} 
