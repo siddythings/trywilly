@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { SideChat, SideChatProvider, useSideChat } from "@/components/side-chat";
 import React from "react";
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const { toggle: toggleSideChat } = useSideChat();
@@ -36,7 +37,9 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SideChatProvider>
-      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      <TooltipProvider>
+        <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      </TooltipProvider>
     </SideChatProvider>
   );
 } 
