@@ -371,9 +371,9 @@ export function SideChat() {
     setChatId("");
   }
 
-  async function handleSend(e?: React.FormEvent | React.KeyboardEvent) {
+  async function handleSend(e?: React.FormEvent | React.KeyboardEvent, overrideInput?: string) {
     if (e) e.preventDefault();
-    const trimmed = input.trim();
+    const trimmed = (overrideInput !== undefined ? overrideInput : input).trim();
     if (!trimmed || isLoading) return;
 
     let currentChatId = chatId || localStorage.getItem("currentChatId") || "";
@@ -531,7 +531,15 @@ export function SideChat() {
             <div className="text-xs font-semibold text-muted-foreground mb-2">Suggested</div>
             <div className="flex flex-col gap-2 mb-4">
               {suggested.map((s, i) => (
-                <Button key={i} variant="ghost" className="justify-start gap-2 px-2 py-1 text-sm">
+                <Button
+                  key={i}
+                  variant="ghost"
+                  className="justify-start gap-2 px-2 py-1 text-sm"
+                  type="button"
+                  onClick={async () => {
+                    await handleSend(undefined, s.label);
+                  }}
+                >
                   {s.icon}
                   {s.label}
                 </Button>
