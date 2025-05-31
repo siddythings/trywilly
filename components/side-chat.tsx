@@ -10,6 +10,7 @@ import { addMessage, getMessages } from "@/lib/messagesRealtime";
 const SideChatContext = React.createContext<{
   isOpen: boolean;
   toggle: () => void;
+  sendMessage: (msg: string) => void;
 } | null>(null);
 
 type ChatMessage = {
@@ -57,6 +58,9 @@ type MessageStop = {
 
 type RTDBMessage = { id: string; sender: string; text: string; timestamp?: number };
 
+// Module-level ref for sendMessage handler
+let globalSendMessageHandlerRef: React.MutableRefObject<(msg: string) => void> | null = null;
+
 export function useSideChat() {
   const context = React.useContext(SideChatContext);
   if (!context) {
@@ -69,8 +73,15 @@ export function SideChatProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = React.useState(true);
   const toggle = React.useCallback(() => setIsOpen(prev => !prev), []);
 
+  // Expose sendMessage as a stable function that calls the global ref
+  const sendMessage = React.useCallback((msg: string) => {
+    if (globalSendMessageHandlerRef) {
+      globalSendMessageHandlerRef.current(msg);
+    }
+  }, []);
+
   return (
-    <SideChatContext.Provider value={{ isOpen, toggle }}>
+    <SideChatContext.Provider value={{ isOpen, toggle, sendMessage }}>
       {children}
     </SideChatContext.Provider>
   );
@@ -78,6 +89,7 @@ export function SideChatProvider({ children }: { children: React.ReactNode }) {
 
 export function SideChat() {
   const { isOpen, toggle } = useSideChat();
+  const sendMessageHandlerRef = React.useRef<(msg: string) => void>(() => {});
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -432,6 +444,20 @@ export function SideChat() {
     if (diff < week) return 'This week';
     return 'Last week';
   }
+
+  // Ensure useEffect is always called at the top level
+  React.useEffect(() => {
+    globalSendMessageHandlerRef = sendMessageHandlerRef;
+    sendMessageHandlerRef.current = (msg: string) => {
+      handleSend(undefined, msg);
+    };
+    // Cleanup on unmount
+    return () => {
+      if (globalSendMessageHandlerRef === sendMessageHandlerRef) {
+        globalSendMessageHandlerRef = null;
+      }
+    };
+  }, [handleSend]);
 
   return (
     <SidebarInset className="flex flex-col flex-1 bg-background border-l">

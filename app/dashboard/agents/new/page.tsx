@@ -2,7 +2,20 @@
 import { MinimalTiptapEditor } from "@/components/minimal-tiptap"
 import Content from "@/components/minimal-tiptap/data/content.json"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
+import { useSideChat } from "@/components/side-chat"
+
 export default function NewAgentPage() {
+  // const editorRef = useRef<any>(null)
+  const { sendMessage } = useSideChat()
+  const [editorText, setEditorText] = useState("")
+
+  const handleTest = () => {
+    if (editorText.trim()) {
+      sendMessage(editorText)
+    }
+  }
+
   return (
     <div className="container mx-auto px-8 py-10">
       <div className="max-w-4xl mx-auto">
@@ -20,9 +33,9 @@ export default function NewAgentPage() {
               <svg xmlns="http://www.w3.org/2000/svg" className="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             </span>
             Run every
-            <select className="mx-1 bg-transparent border-none font-semibold text-foreground focus:outline-none focus:ring-0 cursor-pointer">
+            <select defaultValue="day" className="mx-1 bg-transparent border-none font-semibold text-foreground focus:outline-none focus:ring-0 cursor-pointer">
               <option value="hour">hour</option>
-              <option value="day" selected>day</option>
+              <option value="day">day</option>
               <option value="week">week</option>
             </select>
             at
@@ -40,7 +53,7 @@ export default function NewAgentPage() {
             </select>
           </div>
           <div className="flex items-center gap-1">
-            <button className="border rounded-md px-2 py-0.5 text-sm font-medium flex items-center gap-1">
+            <button className="border rounded-md px-2 py-0.5 text-sm font-medium flex items-center gap-1" onClick={handleTest}>
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polygon points="8,5 19,12 8,19" fill="currentColor" /></svg>
               Test
             </button>
@@ -54,13 +67,14 @@ export default function NewAgentPage() {
           
         </div> */}
         <MinimalTiptapEditor
+          // ref={editorRef}
           value={Content}
           throttleDelay={3000}
           className={cn("h-96 w-full rounded-xl")}
           editorContentClassName="overflow-auto h-full"
           output="text"
           onChange={(value) => {
-            console.log(value)
+            setEditorText(typeof value === "string" ? value : "")
           }}
           placeholder="This is your placeholder..."
           editable={true}
