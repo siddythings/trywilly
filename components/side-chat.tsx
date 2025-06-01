@@ -61,6 +61,14 @@ type RTDBMessage = { id: string; sender: string; text: string; timestamp?: numbe
 // Module-level ref for sendMessage handler
 let globalSendMessageHandlerRef: React.MutableRefObject<(msg: string) => void> | null = null;
 
+declare global {
+  interface Window {
+    api?: {
+      openExternal: (url: string) => void;
+    };
+  }
+}
+
 export function useSideChat() {
   const context = React.useContext(SideChatContext);
   if (!context) {
@@ -86,6 +94,14 @@ export function SideChatProvider({ children }: { children: React.ReactNode }) {
     </SideChatContext.Provider>
   );
 }
+
+// Add Integration type
+export type Integration = {
+  name: string;
+  icon: string;
+  connected: boolean;
+  provider?: string;
+};
 
 export function SideChat() {
   const { isOpen, toggle } = useSideChat();
@@ -206,7 +222,14 @@ export function SideChat() {
       }]);
     }
   };
-
+  const connectIntegration = async (provider: string) => {
+    const URL = `http://localhost:8000/connect?_id=2345654323456&type=${provider}`;
+    if (window.api?.openExternal) {
+      window.api.openExternal(URL);
+    } else {
+      window.open(URL, "_blank");
+    }
+  };
   const streamChat = async (userMessage: string, existingHistory?: Message[], currentChatIdOverride?: string) => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -660,29 +683,33 @@ export function SideChat() {
         </div>
       </form>
       {/* Integrations Modal */}
-      <IntegrationsModal open={showIntegrations} onClose={() => setShowIntegrations(false)} />
+      <IntegrationsModal open={showIntegrations} onClose={() => setShowIntegrations(false)} connectIntegration={connectIntegration} />
     </SidebarInset>
   );
 }
 
 // Modal component for integrations
-function IntegrationsModal({ open, onClose }: { open: boolean, onClose: () => void }) {
-  if (!open) return null;
+function IntegrationsModal({ open, onClose, connectIntegration }: { open: boolean, onClose: () => void, connectIntegration: (provider: string) => void }) {
+  const [integrations, setIntegrations] = React.useState<Integration[]>([]);
+  const [loading, setLoading] = React.useState(false);
 
-  // Sample integrations data
-  const integrations = [
-    { name: 'Gmail', icon: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.png', connected: true },
-    { name: 'Google Calendar', icon: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg', connected: false },
-    { name: 'Notion', icon: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png', connected: false },
-    { name: 'Airtable', icon: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Airtable_Logo.png', connected: false },
-    { name: 'Linear', icon: 'https://avatars.githubusercontent.com/u/53991441?s=200&v=4', connected: false },
-    { name: 'Google Sheets', icon: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Google_Sheets_logo_%282014-2020%29.png', connected: false },
-    { name: 'Stripe', icon: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Stripe_Logo%2C_revised_2016.png', connected: false },
-  ];
+  React.useEffect(() => {
+    if (!open) return;
+    setLoading(true);
+    fetch('http://localhost:8000/api/v1/get-integrations')
+      .then(res => res.json())
+      .then(data => {
+        setIntegrations(data.data || []);
+      })
+      .catch(() => setIntegrations([]))
+      .finally(() => setLoading(false));
+  }, [open]);
+
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="bg-popover text-popover-foreground rounded-2xl shadow-2xl w-full max-w-lg p-0 relative flex flex-col border border-border">
+      <div className="bg-popover text-popover-foreground rounded-2xl shadow-2xl w-full max-w-lg p-0 relative flex flex-col border border-border max-h-[80vh] h-[500px]">
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-2">
           <h2 className="text-lg font-semibold text-foreground">Add integrations</h2>
@@ -703,23 +730,35 @@ function IntegrationsModal({ open, onClose }: { open: boolean, onClose: () => vo
           />
         </div>
         {/* Integrations list */}
-        <div className="flex-1 overflow-y-auto px-6 pb-4">
-          {integrations.map((integration) => (
-            <div key={integration.name} className="flex items-center bg-card rounded-lg border border-border mb-3 px-3 py-2 shadow-sm">
-              <img src={integration.icon} alt={integration.name} className="w-7 h-7 rounded mr-3 object-contain" />
-              <span className="flex-1 text-base font-medium text-foreground">{integration.name}</span>
-              {integration.connected ? (
-                <button className="bg-muted text-foreground border border-border rounded px-3 py-1 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition">Disconnect</button>
-              ) : (
-                <button className="bg-primary text-primary-foreground rounded px-3 py-1 text-sm font-medium hover:bg-primary/90 transition">Connect</button>
-              )}
+        <div className="flex-1 overflow-y-auto px-6 pb-4 min-h-0">
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <span className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></span>
             </div>
-          ))}
+          ) : integrations.length === 0 ? (
+            <div className="text-muted-foreground text-xs py-2">No integrations found</div>
+          ) : (
+            integrations.map((integration) => (
+              <div key={integration.name} className="flex items-center bg-card rounded-lg border border-border mb-3 px-3 py-2 shadow-sm">
+                <img src={integration.icon} alt={integration.name} className="w-7 h-7 rounded mr-3 object-contain" />
+                <span className="flex-1 text-base font-medium text-foreground">{integration.name}</span>
+                {integration.connected ? (
+                  <button className="bg-muted text-foreground border border-border rounded px-2 py-0.5 text-xs font-medium hover:bg-accent hover:text-accent-foreground transition min-h-0">Disconnect</button>
+                ) : (
+                  <button className="bg-primary text-primary-foreground rounded px-2 py-0.5 text-xs font-medium hover:bg-primary/90 transition min-h-0" onClick={() => {
+                    if (integration.provider) {
+                      connectIntegration(integration.provider);
+                    }
+                  }}>Connect</button>
+                )}
+              </div>
+            ))
+          )}
         </div>
         {/* Footer */}
         <div className="flex justify-end px-6 pb-4">
           <button
-            className="bg-muted text-foreground border border-border rounded px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition"
+            className="bg-muted text-foreground border border-border rounded px-3 py-1 text-xs font-medium hover:bg-accent hover:text-accent-foreground transition min-h-0"
             onClick={onClose}
           >
             Close
