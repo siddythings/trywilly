@@ -6,7 +6,8 @@ type ConversationValue = { title?: unknown; createdAt?: unknown };
 
 // Add a new conversation
 export async function addConversation(conversation: { title: string; createdAt?: number }) {
-  const conversationsRef = ref(rtdb, "conversations");
+  const userData = JSON.parse(localStorage.getItem("user") || "{}")
+  const conversationsRef = ref(rtdb, `conversations/${userData.data.id}`);
   const value = {
     ...conversation,
     createdAt: conversation.createdAt || Date.now(),
@@ -18,7 +19,9 @@ export async function addConversation(conversation: { title: string; createdAt?:
 
 // Fetch all conversations
 export async function getConversations(): Promise<Conversation[]> {
-  const snapshot = await get(child(ref(rtdb), "conversations"));
+  const userData = JSON.parse(localStorage.getItem("user") || "{}")
+  const conversationsRef = ref(rtdb, `conversations/${userData.data.id}`);
+  const snapshot = await get(conversationsRef);
   if (!snapshot.exists()) return [];
   const data = snapshot.val();
   return Object.entries(data).map(([id, value]) => {

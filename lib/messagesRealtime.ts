@@ -4,7 +4,8 @@ import { ref, push, get } from "firebase/database";
 type MessageValue = { sender?: string; text?: string; timestamp?: number };
 
 export async function addMessage(conversationId: string, message: { sender: string; text: string }) {
-  const messagesRef = ref(rtdb, `conversations/${conversationId}/messages`);
+  const userData = JSON.parse(localStorage.getItem("user") || "{}")
+  const messagesRef = ref(rtdb, `conversations/${userData.data.id}/${conversationId}/messages`);
   const newMsgRef = push(messagesRef, {
     ...message,
     timestamp: Date.now(),
@@ -13,7 +14,8 @@ export async function addMessage(conversationId: string, message: { sender: stri
 }
 
 export async function getMessages(conversationId: string) {
-  const messagesRef = ref(rtdb, `conversations/${conversationId}/messages`);
+  const userData = JSON.parse(localStorage.getItem("user") || "{}")
+  const messagesRef = ref(rtdb, `conversations/${userData.data.id}/${conversationId}/messages`);
   const snapshot = await get(messagesRef);
   if (!snapshot.exists()) return [];
   const data = snapshot.val();
