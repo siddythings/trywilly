@@ -164,6 +164,146 @@ const agentTemplates = [
         appIcon: "/file.svg",
         badge: "Popular",
         categories: ["All", "Company"],
+        template: {
+            "type": "doc",
+            "content": [
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Goal: Create a weekly summary of key company activities, progress, and highlights."
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Integrations:"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Slack (internal communications)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Google Calendar (meetings, events)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Notion (project updates)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- (for sharing summaries)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Steps:"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "1. Aggregate relevant updates, meeting notes, and project progress from Slack, Google Calendar, and Notion."
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "2. Identify major deliverables, milestones achieved, blockers, and wins."
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "3. Synthesize into a concise summary."
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "4. Share the summary via Den with all employees or stakeholders."
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Notes:"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Link back to original sources for any detailed info."
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Keep language clear and easy to scan."
+                        }
+                    ]
+                }
+            ]
+        }
     },
     {
         title: "Outbound to VC Firms",
@@ -171,6 +311,303 @@ const agentTemplates = [
         appIcon: "/window.svg",
         badge: "Popular",
         categories: ["All", "Fundraising & VC"],
+        template: {
+            "type": "doc",
+            "content": [
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Goal: Identify and organize VC funds that match your company profile for targeted outreach." }
+                    ]
+                },
+                { "type": "paragraph" },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Integrations:" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Google Sheets" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Apollo Organization Search" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Web Search" }
+                    ]
+                },
+                { "type": "paragraph" },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Instructions:" }
+                    ]
+                },
+                { "type": "paragraph" },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Ask the user for their company profile details including:" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Industry/sector" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Company stage (pre-seed, seed, Series A, etc.)" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Funding amount seeking" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Geographic focus/location" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Brief company description or unique value proposition" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Create a new Google Sheet with the following columns:" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- VC Fund Name" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Fund Size" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Investment Stage Focus" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Industry Focus" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Geographic Focus" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Portfolio Companies" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Average Check Size" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Key Partners/Investors" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Contact Information" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Website" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Compatibility Score (1-10)" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Notes" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Search for VC funds that match the company profile using Apollo Organization Search with filters for:" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Investment firms in the relevant industry" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Appropriate company size/funding stage" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Geographic focus aligned with the company" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "For each potential VC fund identified, conduct additional research using Web Search to verify:" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Current investment focus" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Recent investments" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Fund size and typical check size" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Key partners and decision-makers" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Populate the Google Sheet with the gathered information." }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Calculate a compatibility score (1-10) for each VC fund based on how well they match the company profile." }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Sort the Google Sheet by compatibility score to prioritize outreach efforts." }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Provide a summary of findings including:" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Total number of VC funds identified" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Top 5 most compatible funds" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Any notable patterns or insights" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Share the Google Sheet with the user." }
+                    ]
+                },
+                { "type": "paragraph" },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "Notes:" }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- The agent will need specific details about your company to find the most relevant VC funds." }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- The compatibility score is based on how well each fund's investment criteria match your company profile." }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- Consider using this data to craft personalized outreach messages to each VC fund." }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- The sheet can be updated regularly as new information becomes available or as your company evolves." }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        { "type": "text", "text": "- For best results, provide detailed information about your company's unique value proposition and competitive advantages." }
+                    ]
+                }
+            ]
+        }
     },
     {
         title: "Research VC Firms",
@@ -178,6 +615,308 @@ const agentTemplates = [
         appIcon: "/file.svg",
         badge: "Popular",
         categories: ["All", "Fundraising & VC"],
+        template: {
+            "type": "doc",
+            "content": [
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Goal - Research VC firms from calendar appointments and create detailed documents while updating a Notion database"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Integrations"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Google Calendar"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Google Docs"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Instructions"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Scan the user's Google Calendar for upcoming meetings with VC firms or investors"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "For each VC meeting identified, extract the firm name, meeting date/time, and any available contact information"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Research each VC firm using web search to gather comprehensive information including -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Firm overview, history, and investment philosophy"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Portfolio companies and notable investments"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Investment focus (stages, sectors, check sizes)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Key partners/team members who may be in the meeting"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Recent news, fund announcements, or notable exits"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Investment decision-making process (if available)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Portfolio company founder testimonials or references"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Create a detailed Google Doc for each VC firm with all research findings, organized in clear sections with appropriate headings"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Update the Notion database with key information about each VC firm, including -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Firm name and contact details"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Meeting date/time"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Investment focus summary"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Notable portfolio companies"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Key partners/contacts"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Fund size and stage"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Link to the detailed Google Doc"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Notify the user when new research is completed with a summary of findings and links to the documents"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Create a brief meeting preparation summary for each VC meeting one day before the scheduled meeting"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Notes -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- The agent should prioritize research for meetings occurring within the next 7 days"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- When creating Notion database entries, use consistent formatting and tagging for easy filtering"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- If the Notion database doesn't exist yet, create one with appropriate fields for tracking VC meetings"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- For recurring meetings with the same firm, update existing research documents with new information rather than creating duplicates"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Be thorough in research but prioritize quality information over quantity"
+                        }
+                    ]
+                }
+            ]
+        }
     },
     {
         title: "News Digest",
@@ -185,6 +924,111 @@ const agentTemplates = [
         appIcon: "/globe.svg",
         badge: "Popular",
         categories: ["All", "Personal"],
+        template: {
+            "type": "doc",
+            "content": [
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Goal - Read through the latest news and give me a brief synopsis. Focus a little bit on startup news, especially around fundraising announcements and send me an email summary but you should also include notable global events"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Integrations"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Web Search"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Steps"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Collect the latest news"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Summarise the news into an easily digestible format of what you think is important"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Send me an email with the summary"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Notes"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- You should send an email every time"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Always include sources that I can click on in the email"
+                        }
+                    ]
+                }
+            ]
+        }
+
     },
     {
         title: "Blog Post",
@@ -192,75 +1036,488 @@ const agentTemplates = [
         appIcon: "/file.svg",
         badge: "Popular",
         categories: ["All", "Marketing"],
-    },
-    {
-        title: "Scrape Product Hunt",
-        description: "Scrape Product Hunt daily and return a list of trending companies",
-        appIcon: "/mail.svg",
-        badge: "Popular",
-        categories: ["All", "Product"],
-    },
-    {
-        title: "Deep Research on Invest...",
-        description: "Look up investor info before meetings.",
-        appIcon: "/file.svg",
-        badge: "Popular",
-        categories: ["All", "Fundraising & VC"],
-    },
-    {
-        title: "Failed Payment Prevention",
-        description: "Identify failed payments and help recover revenue with follow-ups",
-        appIcon: "/file.svg",
-        badge: "Popular",
-        categories: ["All", "Sales"],
-    },
-    {
-        title: "News Digest",
-        description: "The curated morning news straight to your inbox.",
-        appIcon: "/globe.svg",
-        badge: "Popular",
-        categories: ["All", "Personal"],
-    },
-    {
-        title: "Blog Post",
-        description: "Automatically write high-conversion blog posts from your company knowledge",
-        appIcon: "/file.svg",
-        badge: "Popular",
-        categories: ["All", "Marketing"],
-    },
-    {
-        title: "Scrape Product Hunt",
-        description: "Scrape Product Hunt daily and return a list of trending companies",
-        appIcon: "/mail.svg",
-        badge: "Popular",
-        categories: ["All", "Product"],
-    },
-    {
-        title: "Deep Research on Invest...",
-        description: "Look up investor info before meetings.",
-        appIcon: "/file.svg",
-        badge: "Popular",
-        categories: ["All", "Fundraising & VC"],
-    },
-    {
-        title: "Failed Payment Prevention",
-        description: "Identify failed payments and help recover revenue with follow-ups",
-        appIcon: "/file.svg",
-        badge: "Popular",
-        categories: ["All", "Sales"],
-    }, {
-        title: "News Digest",
-        description: "The curated morning news straight to your inbox.",
-        appIcon: "/globe.svg",
-        badge: "Popular",
-        categories: ["All", "Personal"],
-    },
-    {
-        title: "Blog Post",
-        description: "Automatically write high-conversion blog posts from your company knowledge",
-        appIcon: "/file.svg",
-        badge: "Popular",
-        categories: ["All", "Marketing"],
+        template: {
+            "type": "doc",
+            "content": [
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Goal - Create SEO-optimized articles that incorporate specific keywords after conducting thorough topic research"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Integrations"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Web Search"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Deep Research"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Instructions"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Ask the user for the following information -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Main topic or title for the article"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Target keywords that must be incorporated (at least 3-5)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Company or brand information (if applicable)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Target audience"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Any specific references or sources they want included"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Conduct comprehensive research on the topic using Web Search and Deep Research to gather -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Current industry trends"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Key statistics and data points"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Competitor content on similar topics"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Expert opinions and quotes"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- If company information was provided, research the company to understand -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Brand voice and tone"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Key products or services"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Target market and unique selling propositions"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Create an outline for the article that includes -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Attention-grabbing headline with primary keyword"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Introduction (100-150 words)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- 3-5 main sections with subheadings (each containing at least one target keyword)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Conclusion with call-to-action (100-150 words)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Write the complete article following these guidelines -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Total length between 800-1200 words"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Natural incorporation of all target keywords (avoid keyword stuffing)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Engaging, conversational tone appropriate for the target audience"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Include relevant facts, statistics, and examples from research"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Maintain logical flow between sections"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Review and optimize the article for SEO -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Check keyword density and placement"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Ensure readability with appropriate paragraph length"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Add meta description suggestion"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Verify all facts and citations"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Create a new Den document with the finalized article"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Add a references section at the end listing all sources used"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Present the completed article to the user with -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Word count"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- List of all keywords incorporated"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Link to the Den document"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Notes -"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- The article should be original and pass plagiarism checks"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Use a mix of sentence structures and paragraph lengths for better readability"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Incorporate transitional phrases between sections for smooth flow"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Optimize for featured snippets when possible by including Q&A formats or concise definitions"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Format with clear headings, subheadings, and bullet points where appropriate"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Use active voice primarily and maintain consistent tense throughout"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Adapt tone to match company voice if company information is provided"
+                        }
+                    ]
+                }
+            ]
+        }
     },
     {
         title: "Scrape Product Hunt",
