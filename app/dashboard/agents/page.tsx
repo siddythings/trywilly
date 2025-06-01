@@ -23,7 +23,7 @@ const agentTemplates = [
     {
         title: "Daily Calendar Summary",
         description: "Sends a daily email with all events and background research on who you're meeting with",
-        appIcon: "/calendar.svg",
+        appIcon: "https://devlnkr.s3.ap-south-1.amazonaws.com/build10x/google-calendar.svg",
         badge: "Popular",
         categories: ["All", "Personal"],
         template: {
@@ -571,7 +571,19 @@ function tiptapDocToHtml(doc: Content): string {
                 html += "</p>";
                 break;
             case "text":
-                html += node.text || "";
+                let text = node.text || "";
+                if (node.marks && Array.isArray(node.marks)) {
+                    node.marks.forEach((mark) => {
+                        if (mark.type === "bold") text = `<strong>${text}</strong>`;
+                        if (mark.type === "italic") text = `<em>${text}</em>`;
+                        if (mark.type === "link") {
+                            const href = mark.attrs?.href || "#";
+                            const target = mark.attrs?.target || "_blank";
+                            text = `<a href='${href}' target='${target}' rel='noopener noreferrer' class='text-blue-600 underline'>${text}</a>`;
+                        }
+                    });
+                }
+                html += text;
                 break;
             case "bulletList":
                 html += "<ul>";
@@ -585,13 +597,29 @@ function tiptapDocToHtml(doc: Content): string {
                 break;
             case "listItem":
                 html += "<li>";
-                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+                if (Array.isArray(node.content)) {
+                    node.content.forEach((child) => {
+                        if (child.type === "paragraph" && Array.isArray(child.content)) {
+                            child.content.forEach(renderNode);
+                        } else {
+                            renderNode(child);
+                        }
+                    });
+                }
                 html += "</li>";
                 break;
             case "heading":
                 html += `<h${node.attrs?.level || 2}>`;
                 if (Array.isArray(node.content)) node.content.forEach(renderNode);
                 html += `</h${node.attrs?.level || 2}>`;
+                break;
+            case "blockquote":
+                html += `<blockquote class='border-l-4 border-gray-300 pl-4 italic my-4'>`;
+                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+                html += `</blockquote>`;
+                break;
+            case "horizontalRule":
+                html += `<hr class='my-6 border-gray-300' />`;
                 break;
             default:
                 if (Array.isArray(node.content)) node.content.forEach(renderNode);
@@ -601,4 +629,3 @@ function tiptapDocToHtml(doc: Content): string {
     renderNode(doc as JSONContent);
     return html;
 }
-  
