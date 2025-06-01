@@ -13,7 +13,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
-import { ExternalLink, LayoutGrid, Search, AppWindowIcon } from "lucide-react";
+import { ExternalLink, Search } from "lucide-react";
 import { IconAppsFilled } from "@tabler/icons-react"
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
@@ -179,17 +179,17 @@ export default function AgentsPage() {
   const router = useRouter();
   const handleCreate = async () => {
     const id = uuidv4().toString();
-    const res = await fetch("http://localhost:8000/api/v1/ai-agents/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: id,
-          name: "New agent",
-          schedule: "day",
-          time: "8:00am",
-          content: "",
-        }),
-      })
+    await fetch("http://localhost:8000/api/v1/ai-agents/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: id,
+        name: "New agent",
+        schedule: "day",
+        time: "8:00am",
+        content: "",
+      }),
+    })
     router.push(`/dashboard/agents/new?_id=${id}`);
   }
 
@@ -258,7 +258,8 @@ export default function AgentsPage() {
                             {agent.name || 'Untitled Agent'}
                           </CardTitle>
                           <CardDescription className="text-muted-foreground text-xs">
-                            {agent.description || agent.content || 'No description'}
+                            {agent.description 
+                              || (typeof agent.content === 'string' ? agent.content : 'No description')}
                           </CardDescription>
                         </div>
                         <ExternalLink className="w-4 h-4 text-muted-foreground mt-1" />
