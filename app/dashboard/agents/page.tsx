@@ -187,7 +187,13 @@ export default function AgentsPage() {
         name: "New agent",
         schedule: "day",
         time: "8:00am",
-        content: "",
+        content: {
+            "type": "doc",
+            "content": [
+              
+            ]
+          }
+          ,
       }),
     })
     router.push(`/dashboard/agents/new?_id=${id}`);
