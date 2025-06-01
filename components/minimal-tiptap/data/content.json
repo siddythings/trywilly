@@ -3,13 +3,10 @@
   "content": [
     {
       "type": "paragraph",
-      "attrs": {
-        "level": 1
-      },
       "content": [
         {
           "type": "text",
-          "text": "Goal: (Describe the agent's goal)"
+          "text": "Goal: (Describe the agent's goal) "
         }
       ]
     },
@@ -21,11 +18,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Integrations:"
-        },
-        {
-          "type": "text",
-          "text": "Type tool name to perform any operation (read last 5 email from gmail)"
+          "text": "Integrations:Type tool name to perform any operation (read last 5 email from gmail)"
         }
       ]
     },
@@ -50,6 +43,5 @@
         }
       ]
     }
-
   ]
 }

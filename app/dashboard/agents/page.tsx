@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,6 +16,8 @@ import {
 import { ExternalLink, LayoutGrid, Search, AppWindowIcon } from "lucide-react";
 import { IconAppsFilled } from "@tabler/icons-react"
 import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from 'uuid';
+
 const agentTemplates = [
   {
     title: "Daily Calendar Summary",
@@ -167,8 +169,38 @@ const categories = [
 export default function AgentsPage() {
   const [tab, setTab] = React.useState("All");
   const [topTab, setTopTab] = React.useState("Templates");
+  const [agents, setAgents] = React.useState<Array<{
+    id?: string;
+    name?: string;
+    description?: string;
+    content?: string;
+    schedule?: string;
+  }>>([]);
   const router = useRouter();
+  const handleCreate = async () => {
+    const id = uuidv4().toString();
+    const res = await fetch("http://localhost:8000/api/v1/ai-agents/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: id,
+          name: "New agent",
+          schedule: "day",
+          time: "8:00am",
+          content: "",
+        }),
+      })
+    router.push(`/dashboard/agents/new?_id=${id}`);
+  }
 
+  useEffect(() => {
+    const fetchAgents = async () => {
+      const res = await fetch("http://localhost:8000/api/v1/ai-agents");
+      const resData = await res.json();
+      setAgents(resData.data);
+    }
+    fetchAgents();
+  }, [])
   return (
     <div className="container mx-auto px-8 py-10">
       <div className="max-w-4xl mx-auto">
@@ -191,17 +223,64 @@ export default function AgentsPage() {
           </Tabs>
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             <Search className="w-5 h-5 text-muted-foreground" />
-            <Button size="lg" className="w-full sm:w-auto" onClick={() => router.push("/dashboard/agents/new")}>
+            <Button size="lg" className="w-full sm:w-auto" onClick={handleCreate}>
               + Create new agent
             </Button>
           </div>
         </div>
         {/* Content */}
         {topTab === "My Agents" ? (
-          <div className="">
-            <div className="w-full text-muted-foreground text-lg border rounded-md bg-muted py-12 flex items-center justify-center">
-              You have no agents yet.
-            </div>
+          <div className="mb-8 flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hide">
+            {agents.length === 0 ? (
+              <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 min-h-[140px]">
+                  <div className="col-span-full w-full text-muted-foreground text-lg border rounded-md bg-muted py-12 flex items-center justify-center">
+                    You have no agents yet.
+                  </div>
+                  {/* Hidden placeholder to force grid width */}
+                  <div className="invisible" />
+                  <div className="invisible" />
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: "none" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {agents.map((agent, idx) => (
+                    <Card
+                      key={agent.id || idx}
+                      className="relative h-full p-3 rounded-md border border-muted shadow-sm flex flex-col justify-between min-h-[140px] cursor-pointer hover:border-blue-500 hover:shadow-md transition"
+                      onClick={() => agent.id && router.push(`/dashboard/agents/new?_id=${agent.id}`)}
+                    >
+                      {/* Top: Title, description, external link */}
+                      <div className="flex flex-row items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <CardTitle className="text-base font-semibold leading-tight mb-0.5">
+                            {agent.name || 'Untitled Agent'}
+                          </CardTitle>
+                          <CardDescription className="text-muted-foreground text-xs">
+                            {agent.description || agent.content || 'No description'}
+                          </CardDescription>
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-muted-foreground mt-1" />
+                      </div>
+                      {/* Bottom: App icon left, badge right */}
+                      <div className="flex flex-row items-center justify-between gap-2 -mt-1">
+                        <div className="flex items-center gap-2">
+                          <div className="rounded-lg border bg-muted flex items-center justify-center w-8 h-8">
+                            <img src="/file.svg" alt="app icon" className="w-5 h-5 object-contain" />
+                          </div>
+                        </div>
+                        {agent.schedule && (
+                          <Badge variant="secondary" className="px-2 py-0.5 rounded-lg bg-muted text-foreground font-medium text-[11px] flex items-center h-7">
+                            {agent.schedule}
+                          </Badge>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <Tabs value={tab} onValueChange={setTab}>
