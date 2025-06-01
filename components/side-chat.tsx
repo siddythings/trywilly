@@ -165,8 +165,6 @@ export function SideChat() {
     fetchRecentChats();
   }, []);
 
-  if (!isOpen) return null;
-
   // Example data for suggested actions and recent chats
   const suggested = [
     { icon: <SparklesIcon className="w-4 h-4 text-primary" />, label: "List recent users" },
@@ -485,7 +483,8 @@ export function SideChat() {
     };
   }, [handleSend]);
 
-  return (
+  // Use conditional rendering in the return statement
+  return !isOpen ? null : (
     <SidebarInset className="flex flex-col flex-1 bg-background border-l">
       {/* Header */}
       <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
