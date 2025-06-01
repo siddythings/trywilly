@@ -29,7 +29,7 @@ export const userSignUp = async (
 export const userLogin = async (email: string, password: string) => {
   try {
     const response = await apiInstance({
-      url: "/auth/login",
+      url: "/api/v1/auth/login",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
