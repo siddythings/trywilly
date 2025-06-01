@@ -3,343 +3,595 @@ import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Card,
-  CardTitle,
-  CardDescription,
+    Card,
+    CardTitle,
+    CardDescription,
 } from "@/components/ui/card";
 import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
+    Tabs,
+    TabsList,
+    TabsTrigger,
+    TabsContent,
 } from "@/components/ui/tabs";
 import { ExternalLink, Search } from "lucide-react";
 import { IconAppsFilled } from "@tabler/icons-react"
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
+import { Content, JSONContent } from "@tiptap/react";
 
 const agentTemplates = [
-  {
-    title: "Daily Calendar Summary",
-    description: "Sends a daily email with all events and background research on who you're meeting with",
-    appIcon: "/calendar.svg",
-    badge: "Popular",
-    categories: ["All", "Personal"],
-  },
-  {
-    title: "Company Summary",
-    description: "Create a weekly summary of all activity, progress, and highlights",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Company"],
-  },
-  {
-    title: "Outbound to VC Firms",
-    description: "Identify and organize VC funds that match your company profile for targeted outreach",
-    appIcon: "/window.svg",
-    badge: "Popular",
-    categories: ["All", "Fundraising & VC"],
-  },
-  {
-    title: "Research VC Firms",
-    description: "Research and document VC firms from calendar meetings",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Fundraising & VC"],
-  },
-  {
-    title: "News Digest",
-    description: "The curated morning news straight to your inbox.",
-    appIcon: "/globe.svg",
-    badge: "Popular",
-    categories: ["All", "Personal"],
-  },
-  {
-    title: "Blog Post",
-    description: "Automatically write high-conversion blog posts from your company knowledge",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Marketing"],
-  },
-  {
-    title: "Scrape Product Hunt",
-    description: "Scrape Product Hunt daily and return a list of trending companies",
-    appIcon: "/mail.svg",
-    badge: "Popular",
-    categories: ["All", "Product"],
-  },
-  {
-    title: "Deep Research on Invest...",
-    description: "Look up investor info before meetings.",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Fundraising & VC"],
-  },
-  {
-    title: "Failed Payment Prevention",
-    description: "Identify failed payments and help recover revenue with follow-ups",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Sales"],
-  },
-  {
-    title: "News Digest",
-    description: "The curated morning news straight to your inbox.",
-    appIcon: "/globe.svg",
-    badge: "Popular",
-    categories: ["All", "Personal"],
-  },
-  {
-    title: "Blog Post",
-    description: "Automatically write high-conversion blog posts from your company knowledge",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Marketing"],
-  },
-  {
-    title: "Scrape Product Hunt",
-    description: "Scrape Product Hunt daily and return a list of trending companies",
-    appIcon: "/mail.svg",
-    badge: "Popular",
-    categories: ["All", "Product"],
-  },
-  {
-    title: "Deep Research on Invest...",
-    description: "Look up investor info before meetings.",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Fundraising & VC"],
-  },
-  {
-    title: "Failed Payment Prevention",
-    description: "Identify failed payments and help recover revenue with follow-ups",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Sales"],
-  },  {
-    title: "News Digest",
-    description: "The curated morning news straight to your inbox.",
-    appIcon: "/globe.svg",
-    badge: "Popular",
-    categories: ["All", "Personal"],
-  },
-  {
-    title: "Blog Post",
-    description: "Automatically write high-conversion blog posts from your company knowledge",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Marketing"],
-  },
-  {
-    title: "Scrape Product Hunt",
-    description: "Scrape Product Hunt daily and return a list of trending companies",
-    appIcon: "/mail.svg",
-    badge: "Popular",
-    categories: ["All", "Product"],
-  },
-  {
-    title: "Deep Research on Invest...",
-    description: "Look up investor info before meetings.",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Fundraising & VC"],
-  },
-  {
-    title: "Failed Payment Prevention",
-    description: "Identify failed payments and help recover revenue with follow-ups",
-    appIcon: "/file.svg",
-    badge: "Popular",
-    categories: ["All", "Sales"],
-  },
+    {
+        title: "Daily Calendar Summary",
+        description: "Sends a daily email with all events and background research on who you're meeting with",
+        appIcon: "/calendar.svg",
+        badge: "Popular",
+        categories: ["All", "Personal"],
+        template: {
+            "type": "doc",
+            "content": [
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Goal: Read my calendar for the day, and research each external person I will be meeting with and send me an email with a summary of everyone I am meeting with"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Integrations:"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Steps:"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Get all of the events for the day"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Research each external person I am meeting with (i.e. they have a different email domain to me)"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Collate this research into a single summary with my entire schedule for the day"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Send me this summary via email"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph"
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Notes:"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Subject of the email: Who you are meeting today"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "If I have no events, do not send me an email"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Repeat the research task for each person, ensuring to use and"
+                        }
+                    ]
+                },
+                {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "If I have events, you should send an email everytime"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        title: "Company Summary",
+        description: "Create a weekly summary of all activity, progress, and highlights",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Company"],
+    },
+    {
+        title: "Outbound to VC Firms",
+        description: "Identify and organize VC funds that match your company profile for targeted outreach",
+        appIcon: "/window.svg",
+        badge: "Popular",
+        categories: ["All", "Fundraising & VC"],
+    },
+    {
+        title: "Research VC Firms",
+        description: "Research and document VC firms from calendar meetings",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Fundraising & VC"],
+    },
+    {
+        title: "News Digest",
+        description: "The curated morning news straight to your inbox.",
+        appIcon: "/globe.svg",
+        badge: "Popular",
+        categories: ["All", "Personal"],
+    },
+    {
+        title: "Blog Post",
+        description: "Automatically write high-conversion blog posts from your company knowledge",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Marketing"],
+    },
+    {
+        title: "Scrape Product Hunt",
+        description: "Scrape Product Hunt daily and return a list of trending companies",
+        appIcon: "/mail.svg",
+        badge: "Popular",
+        categories: ["All", "Product"],
+    },
+    {
+        title: "Deep Research on Invest...",
+        description: "Look up investor info before meetings.",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Fundraising & VC"],
+    },
+    {
+        title: "Failed Payment Prevention",
+        description: "Identify failed payments and help recover revenue with follow-ups",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Sales"],
+    },
+    {
+        title: "News Digest",
+        description: "The curated morning news straight to your inbox.",
+        appIcon: "/globe.svg",
+        badge: "Popular",
+        categories: ["All", "Personal"],
+    },
+    {
+        title: "Blog Post",
+        description: "Automatically write high-conversion blog posts from your company knowledge",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Marketing"],
+    },
+    {
+        title: "Scrape Product Hunt",
+        description: "Scrape Product Hunt daily and return a list of trending companies",
+        appIcon: "/mail.svg",
+        badge: "Popular",
+        categories: ["All", "Product"],
+    },
+    {
+        title: "Deep Research on Invest...",
+        description: "Look up investor info before meetings.",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Fundraising & VC"],
+    },
+    {
+        title: "Failed Payment Prevention",
+        description: "Identify failed payments and help recover revenue with follow-ups",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Sales"],
+    }, {
+        title: "News Digest",
+        description: "The curated morning news straight to your inbox.",
+        appIcon: "/globe.svg",
+        badge: "Popular",
+        categories: ["All", "Personal"],
+    },
+    {
+        title: "Blog Post",
+        description: "Automatically write high-conversion blog posts from your company knowledge",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Marketing"],
+    },
+    {
+        title: "Scrape Product Hunt",
+        description: "Scrape Product Hunt daily and return a list of trending companies",
+        appIcon: "/mail.svg",
+        badge: "Popular",
+        categories: ["All", "Product"],
+    },
+    {
+        title: "Deep Research on Invest...",
+        description: "Look up investor info before meetings.",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Fundraising & VC"],
+    },
+    {
+        title: "Failed Payment Prevention",
+        description: "Identify failed payments and help recover revenue with follow-ups",
+        appIcon: "/file.svg",
+        badge: "Popular",
+        categories: ["All", "Sales"],
+    },
 ];
 
 const categories = [
-  "All",
-  "Personal",
-  "Marketing",
-  "Sales",
-  "Customer support",
-  "Company",
-  "Product",
-  "Engineering",
-  "Fundraising & VC",
-  "YC",
+    "All",
+    "Personal",
+    "Marketing",
+    "Sales",
+    "Customer support",
+    "Company",
+    "Product",
+    "Engineering",
+    "Fundraising & VC",
+    "YC",
 ];
 
-export default function AgentsPage() {
-  const [tab, setTab] = React.useState("All");
-  const [topTab, setTopTab] = React.useState("Templates");
-  const [agents, setAgents] = React.useState<Array<{
-    id?: string;
-    name?: string;
-    description?: string;
-    content?: string;
-    schedule?: string;
-  }>>([]);
-  const router = useRouter();
-  const handleCreate = async () => {
-    const id = uuidv4().toString();
-    await fetch("http://localhost:8000/api/v1/ai-agents/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: id,
-        name: "New agent",
-        schedule: "day",
-        time: "8:00am",
-        content: {
-            "type": "doc",
-            "content": [
-              
-            ]
-          }
-          ,
-      }),
-    })
-    router.push(`/dashboard/agents/new?_id=${id}`);
-  }
-
-  useEffect(() => {
-    const fetchAgents = async () => {
-      const res = await fetch("http://localhost:8000/api/v1/ai-agents");
-      const resData = await res.json();
-      setAgents(resData.data);
-    }
-    fetchAgents();
-  }, [])
-  return (
-    <div className="container mx-auto px-8 py-10">
-      <div className="max-w-4xl mx-auto">
-        {/* Heading with icon */}
-        <div className="flex items-center gap-3 mb-2">
-          <IconAppsFilled className="w-8 h-8 text-foreground" />
-          <h1 className="text-4xl font-extrabold tracking-tight">Agents</h1>
-        </div>
-        {/* Tabs + search + create button row */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <Tabs value={topTab} onValueChange={setTopTab}>
-            <TabsList className="h-9">
-              <TabsTrigger value="My Agents">
-                Your agents <span className="ml-1 text-muted-foreground font-normal">(2)</span>
-              </TabsTrigger>
-              <TabsTrigger value="Templates">
-                Templates
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-            <Search className="w-5 h-5 text-muted-foreground" />
-            <Button size="lg" className="w-full sm:w-auto" onClick={handleCreate}>
-              + Create new agent
-            </Button>
-          </div>
-        </div>
-        {/* Content */}
-        {topTab === "My Agents" ? (
-          <div className="mb-8 flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hide">
-            {agents.length === 0 ? (
-              <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16 min-h-[140px]">
-                  <div className="col-span-full w-full text-muted-foreground text-lg border rounded-md bg-muted py-12 flex items-center justify-center">
-                    You have no agents yet.
-                  </div>
-                  {/* Hidden placeholder to force grid width */}
-                  <div className="invisible" />
-                  <div className="invisible" />
-                </div>
-              </div>
-            ) : (
-              <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: "none" }}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16">
-                  {agents.map((agent, idx) => (
-                    <Card
-                      key={agent.id || idx}
-                      className="relative h-full p-3 rounded-md border border-muted shadow-sm flex flex-col justify-between min-h-[140px] cursor-pointer hover:border-blue-500 hover:shadow-md transition"
-                      onClick={() => agent.id && router.push(`/dashboard/agents/new?_id=${agent.id}`)}
-                    >
-                      {/* Top: Title, description, external link */}
-                      <div className="flex flex-row items-start justify-between gap-2">
-                        <div className="flex-1">
-                          <CardTitle className="text-base font-semibold leading-tight mb-0.5">
-                            {agent.name || 'Untitled Agent'}
-                          </CardTitle>
-                          <CardDescription className="text-muted-foreground text-xs">
-                            {agent.description 
-                              || (typeof agent.content === 'string' ? agent.content : 'No description')}
-                          </CardDescription>
-                        </div>
-                        <ExternalLink className="w-4 h-4 text-muted-foreground mt-1" />
-                      </div>
-                      {/* Bottom: App icon left, badge right */}
-                      <div className="flex flex-row items-center justify-between gap-2 -mt-1">
-                        <div className="flex items-center gap-2">
-                          <div className="rounded-lg border bg-muted flex items-center justify-center w-8 h-8">
-                            <img src="/file.svg" alt="app icon" className="w-5 h-5 object-contain" />
-                          </div>
-                        </div>
-                        {agent.schedule && (
-                          <Badge variant="secondary" className="px-2 py-0.5 rounded-lg bg-muted text-foreground font-medium text-[11px] flex items-center h-7">
-                            {agent.schedule}
-                          </Badge>
-                        )}
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <Tabs value={tab} onValueChange={setTab}>
-            <TabsList className="mb-8 flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hide">
-              {categories.map((cat) => (
-                <TabsTrigger key={cat} value={cat} className="capitalize">
-                  {cat}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {categories.map((cat) => (
-              <TabsContent key={cat} value={cat}>
-                <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: "none" }}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16">
-                    {agentTemplates
-                      .filter((agent) => agent.categories.includes(cat))
-                      .map((agent, idx) => (
-                        <Card key={agent.title + idx} className="relative h-full p-3 rounded-md border border-muted shadow-sm flex flex-col justify-between min-h-[140px]">
-                          {/* Top: Title, description, external link */}
-                          <div className="flex flex-row items-start justify-between gap-2">
-                            <div className="flex-1">
-                              <CardTitle className="text-base font-semibold leading-tight mb-0.5">
-                                {agent.title}
-                              </CardTitle>
-                              <CardDescription className="text-muted-foreground text-xs">
-                                {agent.description}
-                              </CardDescription>
-                            </div>
-                            <ExternalLink className="w-4 h-4 text-muted-foreground mt-1" />
-                          </div>
-                          {/* Bottom: App icon left, badge right */}
-                          <div className="flex flex-row items-center justify-between gap-2 -mt-1">
-                            <div className="flex items-center gap-2">
-                              <div className="rounded-lg border bg-muted flex items-center justify-center w-8 h-8">
-                                <img src={agent.appIcon} alt="app icon" className="w-5 h-5 object-contain" />
-                              </div>
-                            </div>
-                            {agent.badge && (
-                              <Badge variant="secondary" className="px-2 py-0.5 rounded-lg bg-muted text-foreground font-medium text-[11px] flex items-center h-7">
-                                {agent.badge}
-                              </Badge>
-                            )}
-                          </div>
-                        </Card>
-                      ))}
-                  </div>
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
-        )}
-      </div>
-    </div>
-  );
+// Define a type for the template
+interface TemplateType {
+    title: string;
+    description: string;
+    appIcon: string;
+    badge: string;
+    categories: string[];
+    template?: Content;
 }
+
+export default function AgentsPage() {
+    const [tab, setTab] = React.useState("All");
+    const [topTab, setTopTab] = React.useState("Templates");
+    const [agents, setAgents] = React.useState<Array<{
+        id?: string;
+        name?: string;
+        description?: string;
+        content?: string;
+        schedule?: string;
+    }>>([]);
+    const router = useRouter();
+    const [selectedTemplate, setSelectedTemplate] = React.useState<TemplateType | null>(null);
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+    const handleCreate = async () => {
+        const id = uuidv4().toString();
+        await fetch("http://localhost:8000/api/v1/ai-agents/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                id: id,
+                name: "New agent",
+                schedule: "day",
+                time: "8:00am",
+                content: {
+                    "type": "doc",
+                    "content": [
+
+                    ]
+                }
+                ,
+            }),
+        })
+        router.push(`/dashboard/agents/new?_id=${id}`);
+    }
+
+    useEffect(() => {
+        const fetchAgents = async () => {
+            const res = await fetch("http://localhost:8000/api/v1/ai-agents");
+            const resData = await res.json();
+            setAgents(resData.data);
+        }
+        fetchAgents();
+    }, [])
+
+    function TemplateModal({ open, onClose, template }: { open: boolean, onClose: () => void, template: TemplateType | null }) {
+        if (!open || !template) return null;
+        return (
+            <div
+                className="fixed inset-0 z-50 flex items-center justify-center"
+                onClick={onClose}
+            >
+                <div
+                    className="bg-white rounded-2xl p-0 max-w-4xl w-full shadow-2xl flex relative max-h-[90vh] overflow-y-auto"
+                    onClick={e => e.stopPropagation()}
+                >
+                    {/* Close button */}
+                    <button
+                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold z-10"
+                        onClick={onClose}
+                    >
+                        ×
+                    </button>
+                    {/* Main content */}
+                    <div className="flex-1 p-8 max-h-[80vh] overflow-y-auto">
+                        <h2 className="text-3xl font-extrabold mb-4">{template.title}</h2>
+                        <p className="mb-6 text-gray-700">{template.description}</p>
+                        {template.template && (
+                            <div
+                                className="mb-6 p-4 bg-gray-50 rounded border text-gray-900 prose prose-lg leading-relaxed max-w-none"
+                                dangerouslySetInnerHTML={{ __html: tiptapDocToHtml(template.template) }}
+                            />
+                        )}
+                    </div>
+                    {/* Sidebar */}
+                    <div className="w-80 bg-gray-50 border-l rounded-r-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <img src={template.appIcon} alt="app icon" className="w-7 h-7 object-contain" />
+                                <span className="text-lg font-semibold">{template.title}</span>
+                            </div>
+                            <div className="mb-4">
+                                <h4 className="font-semibold text-gray-700">About</h4>
+                                <p className="text-sm text-gray-600">{template.description}</p>
+                            </div>
+                            <div className="mb-4">
+                                <h4 className="font-semibold text-gray-700">Integrations</h4>
+                                <span className="inline-flex items-center px-2 py-1 bg-white border rounded text-xs font-medium text-gray-700">
+                                    <span role="img" aria-label="calendar">📅</span> Google Calendar
+                                </span>
+                            </div>
+                        </div>
+                        <button className="w-full mt-6 py-3 bg-black hover:bg-indigo-600 text-white font-semibold rounded-lg text-base transition">
+                            Duplicate template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="container mx-auto px-8 py-10">
+            <div className="max-w-4xl mx-auto">
+                {/* Heading with icon */}
+                <div className="flex items-center gap-3 mb-2">
+                    <IconAppsFilled className="w-8 h-8 text-foreground" />
+                    <h1 className="text-4xl font-extrabold tracking-tight">Agents</h1>
+                </div>
+                {/* Tabs + search + create button row */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                    <Tabs value={topTab} onValueChange={setTopTab}>
+                        <TabsList className="h-9">
+                            <TabsTrigger value="My Agents">
+                                Your agents <span className="ml-1 text-muted-foreground font-normal">(2)</span>
+                            </TabsTrigger>
+                            <TabsTrigger value="Templates">
+                                Templates
+                            </TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                    <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                        <Search className="w-5 h-5 text-muted-foreground" />
+                        <Button size="lg" className="w-full sm:w-auto" onClick={handleCreate}>
+                            + Create new agent
+                        </Button>
+                    </div>
+                </div>
+                {/* Content */}
+                {topTab === "My Agents" ? (
+                    <div className="mb-8 flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hide">
+                        {agents.length === 0 ? (
+                            <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16 min-h-[140px]">
+                                    <div className="col-span-full w-full text-muted-foreground text-lg border rounded-md bg-muted py-12 flex items-center justify-center">
+                                        You have no agents yet.
+                                    </div>
+                                    {/* Hidden placeholder to force grid width */}
+                                    <div className="invisible" />
+                                    <div className="invisible" />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: "none" }}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16">
+                                    {agents.map((agent, idx) => (
+                                        <Card
+                                            key={agent.id || idx}
+                                            className="relative h-full p-3 rounded-md border border-muted shadow-sm flex flex-col justify-between min-h-[140px] cursor-pointer hover:border-blue-500 hover:shadow-md transition"
+                                            onClick={() => agent.id && router.push(`/dashboard/agents/new?_id=${agent.id}`)}
+                                        >
+                                            {/* Top: Title, description, external link */}
+                                            <div className="flex flex-row items-start justify-between gap-2">
+                                                <div className="flex-1">
+                                                    <CardTitle className="text-base font-semibold leading-tight mb-0.5">
+                                                        {agent.name || 'Untitled Agent'}
+                                                    </CardTitle>
+                                                    <CardDescription className="text-muted-foreground text-xs">
+                                                        {agent.description
+                                                            || (typeof agent.content === 'string' ? agent.content : 'No description')}
+                                                    </CardDescription>
+                                                </div>
+                                                <ExternalLink className="w-4 h-4 text-muted-foreground mt-1" />
+                                            </div>
+                                            {/* Bottom: App icon left, badge right */}
+                                            <div className="flex flex-row items-center justify-between gap-2 -mt-1">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="rounded-lg border bg-muted flex items-center justify-center w-8 h-8">
+                                                        <img src="/file.svg" alt="app icon" className="w-5 h-5 object-contain" />
+                                                    </div>
+                                                </div>
+                                                {agent.schedule && (
+                                                    <Badge variant="secondary" className="px-2 py-0.5 rounded-lg bg-muted text-foreground font-medium text-[11px] flex items-center h-7">
+                                                        {agent.schedule}
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <Tabs value={tab} onValueChange={setTab}>
+                        <TabsList className="mb-8 flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hide">
+                            {categories.map((cat) => (
+                                <TabsTrigger key={cat} value={cat} className="capitalize">
+                                    {cat}
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
+                        {categories.map((cat) => (
+                            <TabsContent key={cat} value={cat}>
+                                <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: "none" }}>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16">
+                                        {agentTemplates
+                                            .filter((agent) => agent.categories.includes(cat))
+                                            .map((agent, idx) => (
+                                                <Card key={agent.title + idx} className="relative h-full p-3 rounded-md border border-muted shadow-sm flex flex-col justify-between min-h-[140px] cursor-pointer hover:border-blue-500 hover:shadow-md transition"
+                                                    onClick={() => {
+                                                        setSelectedTemplate(agent);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                >
+                                                    {/* Top: Title, description, external link */}
+                                                    <div className="flex flex-row items-start justify-between gap-2">
+                                                        <div className="flex-1">
+                                                            <CardTitle className="text-base font-semibold leading-tight mb-0.5">
+                                                                {agent.title}
+                                                            </CardTitle>
+                                                            <CardDescription className="text-muted-foreground text-xs">
+                                                                {agent.description}
+                                                            </CardDescription>
+                                                        </div>
+                                                        <ExternalLink className="w-4 h-4 text-muted-foreground mt-1" />
+                                                    </div>
+                                                    {/* Bottom: App icon left, badge right */}
+                                                    <div className="flex flex-row items-center justify-between gap-2 -mt-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="rounded-lg border bg-muted flex items-center justify-center w-8 h-8">
+                                                                <img src={agent.appIcon} alt="app icon" className="w-5 h-5 object-contain" />
+                                                            </div>
+                                                        </div>
+                                                        {agent.badge && (
+                                                            <Badge variant="secondary" className="px-2 py-0.5 rounded-lg bg-muted text-foreground font-medium text-[11px] flex items-center h-7">
+                                                                {agent.badge}
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                </Card>
+                                            ))}
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        ))}
+                    </Tabs>
+                )}
+            </div>
+            {/* Render the modal for template info */}
+            <TemplateModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                template={selectedTemplate}
+            />
+        </div>
+    );
+}
+
+function tiptapDocToHtml(doc: Content): string {
+    if (!doc) return "";
+    let html = "";
+
+    function renderNode(node: JSONContent) {
+        if (!node || typeof node !== 'object' || Array.isArray(node)) return;
+        switch (node.type) {
+            case "doc":
+                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+                break;
+            case "paragraph":
+                html += "<p>";
+                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+                html += "</p>";
+                break;
+            case "text":
+                html += node.text || "";
+                break;
+            case "bulletList":
+                html += "<ul>";
+                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+                html += "</ul>";
+                break;
+            case "orderedList":
+                html += "<ol>";
+                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+                html += "</ol>";
+                break;
+            case "listItem":
+                html += "<li>";
+                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+                html += "</li>";
+                break;
+            case "heading":
+                html += `<h${node.attrs?.level || 2}>`;
+                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+                html += `</h${node.attrs?.level || 2}>`;
+                break;
+            default:
+                if (Array.isArray(node.content)) node.content.forEach(renderNode);
+        }
+    }
+
+    renderNode(doc as JSONContent);
+    return html;
+}
+  
