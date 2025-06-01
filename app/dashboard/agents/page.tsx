@@ -51,6 +51,15 @@ const agentTemplates = [
                     ]
                 },
                 {
+                    "type": "paragraph",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "- Google Calendar"
+                        }
+                    ]
+                },
+                {
                     "type": "paragraph"
                 },
                 {
@@ -67,7 +76,7 @@ const agentTemplates = [
                     "content": [
                         {
                             "type": "text",
-                            "text": "Get all of the events for the day"
+                            "text": "- Get all of the events for the day"
                         }
                     ]
                 },
@@ -76,7 +85,7 @@ const agentTemplates = [
                     "content": [
                         {
                             "type": "text",
-                            "text": "Research each external person I am meeting with (i.e. they have a different email domain to me)"
+                            "text": "- Research each external person I am meeting with (i.e. they have a different email domain to me)"
                         }
                     ]
                 },
@@ -85,7 +94,7 @@ const agentTemplates = [
                     "content": [
                         {
                             "type": "text",
-                            "text": "Collate this research into a single summary with my entire schedule for the day"
+                            "text": "- Collate this research into a single summary with my entire schedule for the day"
                         }
                     ]
                 },
@@ -94,7 +103,7 @@ const agentTemplates = [
                     "content": [
                         {
                             "type": "text",
-                            "text": "Send me this summary via email"
+                            "text": "- Send me this summary via email"
                         }
                     ]
                 },
@@ -115,7 +124,7 @@ const agentTemplates = [
                     "content": [
                         {
                             "type": "text",
-                            "text": "Subject of the email: Who you are meeting today"
+                            "text": "- Subject of the email: Who you are meeting today"
                         }
                     ]
                 },
@@ -124,7 +133,7 @@ const agentTemplates = [
                     "content": [
                         {
                             "type": "text",
-                            "text": "If I have no events, do not send me an email"
+                            "text": "- If I have no events, do not send me an email"
                         }
                     ]
                 },
@@ -133,7 +142,7 @@ const agentTemplates = [
                     "content": [
                         {
                             "type": "text",
-                            "text": "Repeat the research task for each person, ensuring to use and"
+                            "text": "- Repeat the research task for each person, ensuring to use and mention the person's name in the email"
                         }
                     ]
                 },
@@ -142,7 +151,7 @@ const agentTemplates = [
                     "content": [
                         {
                             "type": "text",
-                            "text": "If I have events, you should send an email everytime"
+                            "text": "- If I have events, you should send an email everytime"
                         }
                     ]
                 }
