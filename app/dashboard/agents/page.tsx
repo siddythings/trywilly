@@ -386,9 +386,16 @@ export default function AgentsPage() {
                             </div>
                             <div className="mb-4">
                                 <h4 className="font-semibold text-gray-700">Integrations</h4>
-                                <span className="inline-flex items-center px-2 py-1 bg-white border rounded text-xs font-medium text-gray-700">
-                                    <span role="img" aria-label="calendar">📅</span> Google Calendar
-                                </span>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {template.categories.map((cat) => (
+                                        <span
+                                            key={cat}
+                                            className="inline-flex items-center px-3 py-1 bg-gray-200 rounded-full text-xs font-medium text-gray-700 border"
+                                        >
+                                            {cat}
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                         <button className="w-full mt-6 py-3 bg-black hover:bg-indigo-600 text-white font-semibold rounded-lg text-base transition">
