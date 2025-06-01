@@ -233,7 +233,7 @@ export default function AgentsPage() {
           <div className="mb-8 flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hide">
             {agents.length === 0 ? (
               <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 min-h-[140px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16 min-h-[140px]">
                   <div className="col-span-full w-full text-muted-foreground text-lg border rounded-md bg-muted py-12 flex items-center justify-center">
                     You have no agents yet.
                   </div>
@@ -244,7 +244,7 @@ export default function AgentsPage() {
               </div>
             ) : (
               <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: "none" }}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16">
                   {agents.map((agent, idx) => (
                     <Card
                       key={agent.id || idx}
@@ -295,7 +295,7 @@ export default function AgentsPage() {
             {categories.map((cat) => (
               <TabsContent key={cat} value={cat}>
                 <div className="overflow-y-auto max-h-[70vh] scrollbar-hide" style={{ scrollbarWidth: "none" }}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16">
                     {agentTemplates
                       .filter((agent) => agent.categories.includes(cat))
                       .map((agent, idx) => (
