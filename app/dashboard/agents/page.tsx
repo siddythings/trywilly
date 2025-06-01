@@ -1581,9 +1581,13 @@ export default function AgentsPage() {
 
     const handleCreate = async () => {
         const id = uuidv4().toString();
+        const userData = JSON.parse(localStorage.getItem("user") || "{}")
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents/create`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${userData.data.access_token}`
+            },
             body: JSON.stringify({
                 id: id,
                 name: "New agent",

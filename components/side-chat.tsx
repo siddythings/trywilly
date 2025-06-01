@@ -186,10 +186,12 @@ export function SideChat() {
   const handleToolUse = async (toolUse: ToolUse, messageHistory: Message[]) => {
     try {
       // Make API call to get tool results
+      const userData = JSON.parse(localStorage.getItem("user") || "{}")
       const toolResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tool/execute`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userData.data.access_token}`
         },
         body: JSON.stringify({
           tool_name: toolUse.name,
@@ -245,10 +247,12 @@ export function SideChat() {
 
     try {
       setIsLoading(true);
+      const userData = JSON.parse(localStorage.getItem("user") || "{}")
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userData.data.access_token}`
         },
         body: JSON.stringify({
           messages: messageHistory,
@@ -697,7 +701,12 @@ function IntegrationsModal({ open, onClose, connectIntegration }: { open: boolea
   React.useEffect(() => {
     if (!open) return;
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/get-integrations`)
+    const userData = JSON.parse(localStorage.getItem("user") || "{}")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/get-integrations`, {
+      headers: {
+        'Authorization': `Bearer ${userData.data.access_token}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
         setIntegrations(data.data || []);

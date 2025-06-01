@@ -27,9 +27,13 @@ export default function NewAgentPage() {
   useEffect(() => {
     if (!id) return;
     const fetchAgent = async () => {
-      const res = await fetch(`{${process.env.NEXT_PUBLIC_API_URL}}/api/v1/get-ai-agents/${id}`, {
+      const userData = JSON.parse(localStorage.getItem("user") || "{}")
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/get-ai-agents/${id}`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${userData.data.access_token}`
+        },
       });
       const data = await res.json();
       setAgentName(data.data.name);
@@ -43,9 +47,13 @@ export default function NewAgentPage() {
   
   const handleSave = async () => {
     try {
+      const userData = JSON.parse(localStorage.getItem("user") || "{}")
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents/save`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${userData.data.access_token}`
+        },
         body: JSON.stringify({
           id: id,
           name: agentName,
@@ -63,9 +71,13 @@ export default function NewAgentPage() {
 
   const handleSchedule = async () => {
     try {
+      const userData = JSON.parse(localStorage.getItem("user") || "{}")
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents/schedule`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${userData.data.access_token}`
+        },
         body: JSON.stringify({
           id: id,
           is_scheduled: true,
