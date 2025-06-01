@@ -221,7 +221,9 @@ export function SideChat() {
     }
   };
   const connectIntegration = async (provider: string) => {
-    const URL = `${process.env.NEXT_PUBLIC_API_URL}/connect?_id=2345654323456&type=${provider}`;
+    const userData = JSON.parse(localStorage.getItem("user") || "{}")
+    const user_id = userData.data.id
+    const URL = `${process.env.NEXT_PUBLIC_API_URL}/connect?_id=${user_id}&type=${provider}`;
     if (window.api?.openExternal) {
       window.api.openExternal(URL);
     } else {
