@@ -186,7 +186,7 @@ export function SideChat() {
   const handleToolUse = async (toolUse: ToolUse, messageHistory: Message[]) => {
     try {
       // Make API call to get tool results
-      const toolResponse = await fetch('http://localhost:8000/tool/execute', {
+      const toolResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tool/execute`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ export function SideChat() {
     }
   };
   const connectIntegration = async (provider: string) => {
-    const URL = `http://localhost:8000/connect?_id=2345654323456&type=${provider}`;
+    const URL = `${process.env.NEXT_PUBLIC_API_URL}/connect?_id=2345654323456&type=${provider}`;
     if (window.api?.openExternal) {
       window.api.openExternal(URL);
     } else {
@@ -243,7 +243,7 @@ export function SideChat() {
 
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:8000/chat/stream', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -344,7 +344,7 @@ export function SideChat() {
                       Avoid giving title regarding the finding tools for performing a task. Just pick the title based on the user's query.
                       Avoid generic words like 'conversation', 'chat', or 'help'.`;
     try {
-      const response = await fetch('http://localhost:8000/chat/stream/title', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/stream/title`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -695,7 +695,7 @@ function IntegrationsModal({ open, onClose, connectIntegration }: { open: boolea
   React.useEffect(() => {
     if (!open) return;
     setLoading(true);
-    fetch('http://localhost:8000/api/v1/get-integrations')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/get-integrations`)
       .then(res => res.json())
       .then(data => {
         setIntegrations(data.data || []);

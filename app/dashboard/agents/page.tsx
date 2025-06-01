@@ -1581,7 +1581,7 @@ export default function AgentsPage() {
 
     const handleCreate = async () => {
         const id = uuidv4().toString();
-        await fetch("http://localhost:8000/api/v1/ai-agents/create", {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents/create`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -1603,7 +1603,7 @@ export default function AgentsPage() {
 
     useEffect(() => {
         const fetchAgents = async () => {
-            const res = await fetch("http://localhost:8000/api/v1/ai-agents");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents`);
             const resData = await res.json();
             setAgents(resData.data);
         }

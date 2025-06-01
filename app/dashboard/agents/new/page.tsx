@@ -27,7 +27,7 @@ export default function NewAgentPage() {
   useEffect(() => {
     if (!id) return;
     const fetchAgent = async () => {
-      const res = await fetch(`http://localhost:8000/api/v1/get-ai-agents/${id}`, {
+      const res = await fetch(`{${process.env.NEXT_PUBLIC_API_URL}}/api/v1/get-ai-agents/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -43,7 +43,7 @@ export default function NewAgentPage() {
   
   const handleSave = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/v1/ai-agents/save", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents/save`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -63,7 +63,7 @@ export default function NewAgentPage() {
 
   const handleSchedule = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/v1/ai-agents/schedule", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents/schedule`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
