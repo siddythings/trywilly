@@ -28,7 +28,8 @@ export default function NewAgentPage() {
     if (!id) return;
     const fetchAgent = async () => {
       const userData = JSON.parse(localStorage.getItem("user") || "{}")
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/get-ai-agents/${id}`, {
+      const agent_id = new URLSearchParams(window.location.search).get("_id")
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/get-ai-agents/${agent_id}`, {
         method: "GET",
         headers: { 
           "Content-Type": "application/json",
