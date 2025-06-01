@@ -97,7 +97,7 @@ export function SideChat() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [showIntegrations, setShowIntegrations] = useState(false);
-  const [chatId, setChatId] = useState<string>("default");
+  const [chatId, setChatId] = useState<string>("");
   const [recentChats, setRecentChats] = useState<Conversation[]>([]);
   const [isRecentLoading, setIsRecentLoading] = useState(false);
 
@@ -111,6 +111,7 @@ export function SideChat() {
 
   useEffect(() => {
     async function fetchMessages() {
+      if (!chatId || chatId === "default") return;
       setIsFetching(true);
       try {
         const msgs = await getMessages(chatId);
@@ -401,6 +402,9 @@ export function SideChat() {
       setIsLoading(false);
     }
 
+    // Only proceed if we have a real chatId
+    if (!currentChatId || currentChatId === "default") return;
+
     setMessages(prev => {
       const updated = [...prev, { sender: "user", text: trimmed }];
       // Call streamChat with the updated history and correct chatId
@@ -419,7 +423,6 @@ export function SideChat() {
     } catch (err) {
       console.error("Failed to save message to RTDB", err);
     }
-    // No need to call streamChat here
   }
 
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
