@@ -7,10 +7,15 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { SideChat, SideChatProvider, useSideChat } from "@/components/side-chat"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 function DashboardContent() {
   const { toggle: toggleSideChat } = useSideChat();
-  
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/dashboard/agents")
+  }, [])
   return (
     // <SidebarProvider
     //   style={
