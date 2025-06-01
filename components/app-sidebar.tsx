@@ -3,24 +3,18 @@
 import * as React from "react"
 import {
   IconCamera,
-  IconChartBar,
-  IconDashboard,
   IconDatabase,
   IconFileAi,
   IconFileDescription,
   IconFileWord,
-  IconFolder,
   IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
   IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
   IconAppsFilled,
 } from "@tabler/icons-react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -42,6 +36,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { ChevronRight } from "lucide-react"
+import { useEffect, useState } from "react"
 
 const data = {
   user: {
@@ -177,7 +172,17 @@ const data = {
   ]
 }
 
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = useState<{ name: string; email: string; avatar: string } | null>(null);
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("user") || "{}")
+    if (userData && userData.data) {
+      setUser(userData.data)
+    }
+  }, [])
+  
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -234,7 +239,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user || data.user} />
       </SidebarFooter>
     </Sidebar>
   )

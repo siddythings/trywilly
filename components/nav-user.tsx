@@ -83,7 +83,7 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <IconUserCircle />
                 Account
@@ -96,9 +96,13 @@ export function NavUser({
                 <IconNotification />
                 Notifications
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            </DropdownMenuGroup> */}
+            {/* <DropdownMenuSeparator /> */}
+            <DropdownMenuItem onClick={() => {
+              localStorage.removeItem("user")
+              localStorage.removeItem("access_token")
+              window.location.href = "/login"
+            }}>
               <IconLogout />
               Log out
             </DropdownMenuItem>
