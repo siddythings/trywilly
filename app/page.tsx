@@ -1,4 +1,9 @@
+"use client"
+import { useRouter } from 'next/navigation';
+
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-[#ece9e3] font-[family-name:var(--font-geist-sans)]">
       {/* Header */}
@@ -26,13 +31,13 @@ export default function Home() {
           <a href="#" className="hover:underline">Contact</a> */}
         </nav>
         {/* Actions */}
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <button className="hidden md:inline-block px-4 py-1.5 rounded font-semibold text-black hover:bg-[#e2e0db] transition">Sign up</button>
           <button className="px-4 py-1.5 rounded bg-white border border-black/10 font-semibold text-black hover:bg-[#f5f5f5] transition">Login</button>
           <button className="ml-2 p-2 rounded hover:bg-[#e2e0db] transition">
             <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l2 2"/></svg>
           </button>
-        </div>
+        </div> */}
       </header>
       {/* Hero Section */}
       <section className="py-20">
@@ -78,8 +83,8 @@ export default function Home() {
             </div>
             {/* CTA Buttons */}
             <div className="flex gap-3 mb-8">
-              <button className="bg-black text-white px-6 py-2 rounded font-semibold hover:bg-[#222] transition">Get started</button>
-              <button className="bg-white border border-black/10 px-6 py-2 rounded font-semibold text-black hover:bg-[#f5f5f5] transition"> Book a demo <span className="ml-1">→</span></button>
+              <button onClick={() => router.push('/login')} className="bg-black text-white px-6 py-2 rounded font-semibold hover:bg-[#222] transition">Get started</button>
+              <button onClick={() => router.push('/login')} className="bg-white border border-black/10 px-6 py-2 rounded font-semibold text-black hover:bg-[#f5f5f5] transition"> Book a demo <span className="ml-1">→</span></button>
             </div>
             <div className="text-[#a39e94] text-sm mt-2">2 of 3 — <span className="font-medium text-black">Issues</span></div>
           </div>
@@ -90,59 +95,6 @@ export default function Home() {
               <span className="text-[#d6d3cb] text-2xl font-bold">[ Product Screenshot ]</span>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Integrations & Chat Section */}
-      <section className="w-full bg-[#f9f8f6] py-20 px-4 flex flex-col items-center">
-        <div className="max-w-7xl w-full mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
-          {/* Left: Headline, description, features */}
-          <div className="flex-1 flex flex-col items-start max-w-xl">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-black mb-2">Focus on what you love.</h2>
-            <h3 className="text-2xl sm:text-2xl font-medium text-[#444] mb-4">Let the agent handle the rest.</h3>
-            <p className="text-[#7c786f] mb-8">Our AI agents understand your business and can take action in the tools you use every day.</p>
-            <div className="w-full flex flex-col gap-2">
-              <div className="flex items-center gap-3 border-l-2 border-black pl-3 font-semibold text-black text-lg">
-                50+ integrations
-                <span className="text-sm font-normal text-[#7c786f]">Agents can complete tasks in all your favourite apps.</span>
-              </div>
-              <div className="pl-3 text-[#444] border-l border-[#e2e0db] ml-1">Hyper-personalized</div>
-              <div className="pl-3 text-[#444] border-l border-[#e2e0db] ml-1">Question answering</div>
-              <div className="pl-3 text-[#444] border-l border-[#e2e0db] ml-1">Agent swarms</div>
-            </div>
-          </div>
-          {/* Right: Chat Card Mockup */}
-          <div className="flex-1 flex justify-center items-center w-full">
-            <div className="bg-white rounded-2xl shadow-xl border border-[#e2e0db] w-full max-w-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-semibold text-lg text-[#444]">New chat</span>
-                <div className="flex gap-2">
-                  <button className="p-1.5 rounded hover:bg-[#f5f5f5] transition" title="Edit"><svg width="18" height="18" fill="none" stroke="#bbb" strokeWidth="2"><path d="M4 13.5V16h2.5l7.1-7.1-2.5-2.5L4 13.5z"/><path d="M14.7 6.3a1 1 0 0 0 0-1.4l-1.6-1.6a1 1 0 0 0-1.4 0l-1.1 1.1 2.5 2.5 1.1-1.1z"/></svg></button>
-                  <button className="p-1.5 rounded hover:bg-[#f5f5f5] transition" title="History"><svg width="18" height="18" fill="none" stroke="#bbb" strokeWidth="2"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 2"/></svg></button>
-                </div>
-              </div>
-              <div className="bg-[#faf9f7] rounded-xl border border-[#ece9e3] p-6 flex items-center gap-3 min-h-[100px]">
-                <span className="inline-block"><svg width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#fff"/><text x="16" y="21" textAnchor="middle" fontSize="16" fill="#EA4335" fontFamily="Arial, sans-serif">G</text></svg></span>
-                <span className="text-lg text-[#444]">Gmail</span>
-              </div>
-              <div className="flex justify-end mt-4">
-                <button className="bg-[#7b7bfa] hover:bg-[#6366f1] text-white rounded-full p-2 transition" title="Send"><svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg></button>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Bottom: Tool Icons */}
-        <div className="w-full max-w-5xl mx-auto flex flex-col items-center mt-16">
-          <div className="flex flex-wrap justify-center gap-4 mb-4">
-            {/* Example icons, replace with your own as needed */}
-            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-[#e2e0db]"><svg width="24" height="24" fill="#FF0000"><rect width="24" height="24" rx="6" fill="#fff"/><text x="12" y="17" textAnchor="middle" fontSize="12" fill="#FF0000" fontFamily="Arial, sans-serif">YT</text></svg></div>
-            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-[#e2e0db]"><svg width="24" height="24" fill="#000"><circle cx="12" cy="12" r="10" fill="#000"/></svg></div>
-            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-[#e2e0db]"><svg width="24" height="24" fill="#4285F4"><rect width="24" height="24" rx="6" fill="#fff"/><text x="12" y="17" textAnchor="middle" fontSize="12" fill="#4285F4" fontFamily="Arial, sans-serif">G</text></svg></div>
-            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-[#e2e0db]"><svg width="24" height="24" fill="#34A853"><rect width="24" height="24" rx="6" fill="#fff"/><text x="12" y="17" textAnchor="middle" fontSize="12" fill="#34A853" fontFamily="Arial, sans-serif">C</text></svg></div>
-            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-[#e2e0db]"><svg width="24" height="24" fill="#F4B400"><rect width="24" height="24" rx="6" fill="#fff"/><text x="12" y="17" textAnchor="middle" fontSize="12" fill="#F4B400" fontFamily="Arial, sans-serif">D</text></svg></div>
-            {/* ...add more icons as needed... */}
-          </div>
-          <div className="text-[#7c786f] text-center text-lg">Agents work in all of your favorite tools</div>
         </div>
       </section>
     </div>
