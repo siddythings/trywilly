@@ -18,6 +18,7 @@ import { IconAppsFilled } from "@tabler/icons-react"
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
 import { Content, JSONContent } from "@tiptap/react";
+import { duplicateAgent } from "@/fetcher/user-login";
 
 const agentTemplates = [
     {
@@ -1578,6 +1579,7 @@ export default function AgentsPage() {
     const router = useRouter();
     const [selectedTemplate, setSelectedTemplate] = React.useState<TemplateType | null>(null);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const handleCreate = async () => {
         const id = uuidv4().toString();
@@ -1602,12 +1604,17 @@ export default function AgentsPage() {
                 ,
             }),
         })
-        router.push(`/dashboard/agents/new?_id=${id}`);
+        router.push(`/dashboard/agents/new/${id}`);
     }
 
     useEffect(() => {
         const fetchAgents = async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents`);
+            const userData = JSON.parse(localStorage.getItem("user") || "{}")
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai-agents`, {
+                headers: {
+                    'Authorization': `Bearer ${userData.data.access_token}`
+                }
+            });
             const resData = await res.json();
             setAgents(resData.data);
         }
@@ -1615,6 +1622,31 @@ export default function AgentsPage() {
     }, [])
 
     function TemplateModal({ open, onClose, template }: { open: boolean, onClose: () => void, template: TemplateType | null }) {
+        const router = useRouter();
+        const handleDuplicate = async () => {
+            if (!template) return;
+            setLoading(true);
+            try {
+                // Prepare agent data for duplication
+                const agentData = {
+                    name: template.title,
+                    description: template.description,
+                    appIcon: template.appIcon,
+                    badge: template.badge,
+                    categories: template.categories,
+                    content: template.template,
+                };
+                const result = await duplicateAgent(agentData);
+                onClose();
+                if (result && result.data.id) {
+                    router.push(`/dashboard/agents/new?_id=${result.data.id}`);
+                }
+            } catch (err) {
+                alert("Failed to duplicate agent: " + (err instanceof Error ? err.message : String(err)));
+            } finally {
+                setLoading(false);
+            }
+        };
         if (!open || !template) return null;
         return (
             <div
@@ -1668,8 +1700,18 @@ export default function AgentsPage() {
                                 </div>
                             </div>
                         </div>
-                        <button className="w-full mt-6 py-3 bg-black hover:bg-indigo-600 text-white font-semibold rounded-lg text-base transition">
-                            Duplicate template
+                        <button
+                            className="w-full mt-6 py-3 bg-black hover:bg-indigo-600 text-white font-semibold rounded-lg text-base transition flex items-center justify-center"
+                            onClick={handleDuplicate}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                                </svg>
+                            ) : null}
+                            {loading ? "Duplicating..." : "Duplicate template"}
                         </button>
                     </div>
                 </div>
@@ -1690,7 +1732,7 @@ export default function AgentsPage() {
                     <Tabs value={topTab} onValueChange={setTopTab}>
                         <TabsList className="h-9">
                             <TabsTrigger value="My Agents">
-                                Your agents <span className="ml-1 text-muted-foreground font-normal">(2)</span>
+                                Your agents <span className="ml-1 text-muted-foreground font-normal">({agents.length})</span>
                             </TabsTrigger>
                             <TabsTrigger value="Templates">
                                 Templates
@@ -1733,7 +1775,7 @@ export default function AgentsPage() {
                                                     <CardTitle className="text-base font-semibold leading-tight mb-0.5">
                                                         {agent.name || 'Untitled Agent'}
                                                     </CardTitle>
-                                                    <CardDescription className="text-muted-foreground text-xs">
+                                                    <CardDescription className="text-muted-foreground text-xs whitespace-normal break-words">
                                                         {agent.description
                                                             || (typeof agent.content === 'string' ? agent.content : 'No description')}
                                                     </CardDescription>
@@ -1787,7 +1829,7 @@ export default function AgentsPage() {
                                                             <CardTitle className="text-base font-semibold leading-tight mb-0.5">
                                                                 {agent.title}
                                                             </CardTitle>
-                                                            <CardDescription className="text-muted-foreground text-xs">
+                                                            <CardDescription className="text-muted-foreground text-xs whitespace-normal break-words">
                                                                 {agent.description}
                                                             </CardDescription>
                                                         </div>

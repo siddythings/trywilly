@@ -112,3 +112,22 @@ export const logout = async () => {
     throw new Error(e.response?.statusText || "Something went wrong");
   }
 };
+
+export const duplicateAgent = async (agent: any) => {
+  try {
+    const token = localStorage.getItem("access_token");
+    const response = await apiInstance({
+      url: "/api/v1/ai-agents/duplicate",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      data: { ...agent },
+    });
+
+    return response.data;
+  } catch (e: any) {
+    throw new Error(e.response?.statusText || "Something went wrong");
+  }
+};
