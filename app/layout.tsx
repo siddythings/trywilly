@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/providers/theme";
+import { env } from "process";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
+const jakarta = Plus_Jakarta_Sans({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
@@ -46,13 +49,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      > 
+    <html lang="en" className={`${geistSans.variable} ${jakarta.variable}`}>
+      {env.NEXT_PUBLIC_UMAMI_ID && (
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id={env.NEXT_PUBLIC_UMAMI_ID}
+        />
+      )}
+      <body className="antialiased">
       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
-        {children}
-        <Toaster />
+        <ThemeProvider>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </GoogleOAuthProvider>
       </body>
     </html>
