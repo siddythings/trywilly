@@ -183,7 +183,7 @@ export function SideChat() {
     }));
   };
 
-  const handleToolUse = async (toolUse: ToolUse, messageHistory: Message[]) => {
+  const handleToolUse = async (toolUse: ToolUse, messageHistory: Message[]): Promise<unknown | undefined> => {
     try {
       // Make API call to get tool results
       const userData = JSON.parse(localStorage.getItem("user") || "{}")
@@ -205,21 +205,27 @@ export function SideChat() {
 
       const toolResult = await toolResponse.json();
 
-      // Add tool result to message history with proper typing
-      const updatedHistory: Message[] = [
-        ...messageHistory,
-        { role: "assistant", content: JSON.stringify(toolUse) },
-        { role: "user", content: JSON.stringify(toolResult.data) }
-      ];
-
-      // Continue the conversation with the tool result
-      await streamChat("", updatedHistory);
+      if (toolUse.name === "tool_finder") {
+        // For tool_finder, return the tool result for use in tools array
+        return toolResult.data;
+      } else {
+        // Default behavior for other tools: update history and return undefined
+        const updatedHistory: Message[] = [
+          ...messageHistory,
+          { role: "assistant", content: JSON.stringify(toolUse) },
+          { role: "user", content: JSON.stringify(toolResult.data) }
+        ];
+        // Call streamChatLoop recursively for this tool result
+        await streamChatLoop("", updatedHistory);
+        return undefined;
+      }
     } catch (error) {
       console.error('Error executing tool:', error);
       setMessages(prev => [...prev, {
         sender: "assistant",
         text: "Sorry, there was an error executing the tool."
       }]);
+      return undefined;
     }
   };
   const connectIntegration = async (provider: string) => {
@@ -232,7 +238,12 @@ export function SideChat() {
       window.open(URL, "_blank");
     }
   };
-  const streamChat = async (userMessage: string, existingHistory?: Message[], currentChatIdOverride?: string) => {
+  const streamChat = async (
+    userMessage: string,
+    existingHistory?: Message[],
+    currentChatIdOverride?: string,
+    tools: unknown[] = []
+  ): Promise<null | { toolUse: ToolUse; messageHistory: Message[] }> => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -256,7 +267,7 @@ export function SideChat() {
         },
         body: JSON.stringify({
           messages: messageHistory,
-          tools: [] // Add any tools if needed
+          tools
         }),
         signal: abortControllerRef.current.signal
       });
@@ -272,6 +283,8 @@ export function SideChat() {
       setMessages(prev => [...prev, { sender: "assistant", text: "", isStreaming: true }]);
 
       let currentText = "";
+      let toolUseToReturn: ToolUse | undefined = undefined;
+      let toolUseMessageHistory: Message[] | undefined = undefined;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -319,7 +332,8 @@ export function SideChat() {
                 ) as ToolUse | undefined;
 
                 if (toolUse) {
-                  await handleToolUse(toolUse, messageHistory);
+                  toolUseToReturn = toolUse;
+                  toolUseMessageHistory = messageHistory;
                 }
               }
             }
@@ -328,6 +342,10 @@ export function SideChat() {
           }
         }
       }
+      if (toolUseToReturn && toolUseMessageHistory) {
+        return { toolUse: toolUseToReturn, messageHistory: toolUseMessageHistory };
+      }
+      return null;
     } catch (error: unknown) {
       if (error instanceof Error && error.name === 'AbortError') {
         console.log('Stream aborted');
@@ -338,9 +356,42 @@ export function SideChat() {
           text: "Sorry, there was an error processing your request."
         }]);
       }
+      return null;
     } finally {
       setIsLoading(false);
       abortControllerRef.current = null;
+    }
+  };
+
+  // New function to handle chained tool use
+  const streamChatLoop = async (
+    userMessage: string,
+    existingHistory?: Message[],
+    currentChatIdOverride?: string,
+    tools: unknown[] = []
+  ) => {
+    let nextUserMessage = userMessage;
+    let nextHistory = existingHistory;
+    let nextTools = tools;
+    let currentChatId = currentChatIdOverride;
+
+    while (true) {
+      const result = await streamChat(nextUserMessage, nextHistory, currentChatId, nextTools);
+      if (result && result.toolUse) {
+        const toolResult = await handleToolUse(result.toolUse, result.messageHistory);
+        if (result.toolUse.name === "tool_finder" && toolResult !== undefined) {
+          // For tool_finder, pass tool result as tools array
+          nextUserMessage = "";
+          nextHistory = result.messageHistory;
+          nextTools = toolResult as unknown[] || [];
+          // Continue loop
+        } else {
+          // For other tools, handleToolUse already called streamChatLoop recursively
+          break;
+        }
+      } else {
+        break;
+      }
     }
   };
 
@@ -416,17 +467,35 @@ export function SideChat() {
     const trimmed = (overrideInput !== undefined ? overrideInput : input).trim();
     if (!trimmed || isLoading) return;
 
-    let currentChatId = chatId || localStorage.getItem("currentChatId") || "";
+    const currentChatId = chatId || localStorage.getItem("currentChatId") || "";
 
     // If this is a new conversation (no chatId or no messages yet)
     if (!currentChatId || messages.length === 0) {
       setIsLoading(true);
       const autoTitle = await fetchAutoTitle(trimmed);
       const newId = await addConversation({ title: autoTitle });
-      currentChatId = newId || "";
-      setChatId(currentChatId);
+      const newCurrentChatId = newId || "";
+      setChatId(newCurrentChatId);
       if (newId) localStorage.setItem("currentChatId", newId);
       setIsLoading(false);
+      // Only proceed if we have a real chatId
+      if (!newCurrentChatId || newCurrentChatId === "default") return;
+      setMessages(prev => {
+        const updated = [...prev, { sender: "user", text: trimmed }];
+        streamChatLoop(trimmed, prev.map(msg => ({
+          role: msg.sender === "user" ? "user" : msg.sender === "assistant" ? "assistant" : "tool",
+          content: msg.text
+        })), newCurrentChatId);
+        return updated;
+      });
+      setInput("");
+      try {
+        setIsFetching(false);
+        await addMessage(newCurrentChatId, { sender: "user", text: trimmed });
+      } catch (err) {
+        console.error("Failed to save message to RTDB", err);
+      }
+      return;
     }
 
     // Only proceed if we have a real chatId
@@ -434,8 +503,8 @@ export function SideChat() {
 
     setMessages(prev => {
       const updated = [...prev, { sender: "user", text: trimmed }];
-      // Call streamChat with the updated history and correct chatId
-      streamChat(trimmed, updated.map(msg => ({
+      // Call streamChatLoop with the previous history (before adding the new message)
+      streamChatLoop(trimmed, prev.map(msg => ({
         role: msg.sender === "user" ? "user" : msg.sender === "assistant" ? "assistant" : "tool",
         content: msg.text
       })), currentChatId);
