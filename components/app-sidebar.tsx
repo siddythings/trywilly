@@ -13,6 +13,7 @@ import {
   IconSearch,
   IconSettings,
   IconAppsFilled,
+  IconApi,
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -50,6 +51,11 @@ const data = {
       title: "Agents",
       url: "/dashboard/agents",
       icon: IconAppsFilled,
+    },
+    {
+      title: "Integrations",
+      url: "/dashboard/integrations",
+      icon: IconApi,
     },
     // {
     //   title: "Lifecycle",

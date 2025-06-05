@@ -1654,45 +1654,45 @@ export default function AgentsPage() {
                 onClick={onClose}
             >
                 <div
-                    className="bg-white rounded-2xl p-0 max-w-4xl w-full shadow-2xl flex relative max-h-[90vh] overflow-y-auto"
+                    className="bg-background rounded-2xl p-0 max-w-4xl w-full shadow-2xl flex relative max-h-[90vh] overflow-y-auto border border-border"
                     onClick={e => e.stopPropagation()}
                 >
                     {/* Close button */}
                     <button
-                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold z-10"
+                        className="absolute top-4 right-4 text-muted-foreground hover:text-foreground text-2xl font-bold z-10"
                         onClick={onClose}
                     >
                         ×
                     </button>
                     {/* Main content */}
                     <div className="flex-1 p-8 max-h-[80vh] overflow-y-auto">
-                        <h2 className="text-3xl font-extrabold mb-4">{template.title}</h2>
-                        <p className="mb-6 text-gray-700">{template.description}</p>
+                        <h2 className="text-3xl font-extrabold mb-4 text-foreground">{template.title}</h2>
+                        <p className="mb-6 text-muted-foreground">{template.description}</p>
                         {template.template && (
                             <div
-                                className="mb-6 p-4 bg-gray-50 rounded border text-gray-900 prose prose-lg leading-relaxed max-w-none"
+                                className="mb-6 p-4 bg-muted rounded border text-foreground prose prose-lg leading-relaxed max-w-none border-border"
                                 dangerouslySetInnerHTML={{ __html: tiptapDocToHtml(template.template) }}
                             />
                         )}
                     </div>
                     {/* Sidebar */}
-                    <div className="w-80 bg-gray-50 border-l rounded-r-2xl p-8 flex flex-col justify-between">
+                    <div className="w-80 bg-muted border-l rounded-r-2xl p-8 flex flex-col justify-between border-border">
                         <div>
                             <div className="flex items-center gap-2 mb-2">
                                 <img src={template.appIcon} alt="app icon" className="w-7 h-7 object-contain" />
-                                <span className="text-lg font-semibold">{template.title}</span>
+                                <span className="text-lg font-semibold text-foreground">{template.title}</span>
                             </div>
                             <div className="mb-4">
-                                <h4 className="font-semibold text-gray-700">About</h4>
-                                <p className="text-sm text-gray-600">{template.description}</p>
+                                <h4 className="font-semibold text-foreground">About</h4>
+                                <p className="text-sm text-muted-foreground">{template.description}</p>
                             </div>
                             <div className="mb-4">
-                                <h4 className="font-semibold text-gray-700">Integrations</h4>
+                                <h4 className="font-semibold text-foreground">Integrations</h4>
                                 <div className="flex flex-wrap gap-2 mt-2">
                                     {template.categories.map((cat) => (
                                         <span
                                             key={cat}
-                                            className="inline-flex items-center px-3 py-1 bg-gray-200 rounded-full text-xs font-medium text-gray-700 border"
+                                            className="inline-flex items-center px-3 py-1 bg-background rounded-full text-xs font-medium text-muted-foreground border border-border"
                                         >
                                             {cat}
                                         </span>
@@ -1701,12 +1701,12 @@ export default function AgentsPage() {
                             </div>
                         </div>
                         <button
-                            className="w-full mt-6 py-3 bg-black hover:bg-indigo-600 text-white font-semibold rounded-lg text-base transition flex items-center justify-center"
+                            className="w-full mt-6 py-3 bg-black dark:bg-white dark:text-black hover:bg-indigo-600 dark:hover:bg-indigo-400 text-white font-semibold rounded-lg text-base transition flex items-center justify-center"
                             onClick={handleDuplicate}
                             disabled={loading}
                         >
                             {loading ? (
-                                <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg className="animate-spin h-5 w-5 mr-2 text-white dark:text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                                 </svg>
