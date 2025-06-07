@@ -711,9 +711,14 @@ export function SideChat() {
             rows={1}
             placeholder="Type @ to mention anything"
             className="w-full resize-none border-0 bg-transparent focus:outline-none focus:ring-0 focus:border-transparent text-base placeholder:text-muted-foreground p-0 mb-1"
-            style={{ minHeight: '28px', maxHeight: '80px' }}
+            style={{ minHeight: '28px', maxHeight: '200px', overflowY: 'auto' }}
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={e => {
+              setInput(e.target.value);
+              const textarea = e.target as HTMLTextAreaElement;
+              textarea.style.height = '28px'; // reset to 1 line
+              textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+            }}
             onKeyDown={handleInputKeyDown}
             disabled={isLoading}
           />
