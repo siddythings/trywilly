@@ -1803,7 +1803,7 @@ export default function AgentsPage() {
                     </div>
                 ) : (
                     <Tabs value={tab} onValueChange={setTab}>
-                        <TabsList className="mb-8 flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hide">
+                        <TabsList className="mb-8 flex-nowrap overflow-x-auto whitespace-nowrap scrollbar-hide inline-flex w-auto min-w-0">
                             {categories.map((cat) => (
                                 <TabsTrigger key={cat} value={cat} className="capitalize">
                                     {cat}

@@ -19,10 +19,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         "--sidebar-width": "calc(var(--spacing) * 72)",
         "--header-height": "calc(var(--spacing) * 12)",
       } as React.CSSProperties}
-      className="flex h-full"
+      className="flex h-full w-full min-h-screen flex-col sm:flex-row"
     >
-      <AppSidebar variant="inset" />
-      <SidebarInset className="flex flex-col flex-[1.5]">
+      <AppSidebar variant="inset" className="w-full sm:w-[var(--sidebar-width)] shrink-0" />
+      <SidebarInset className="flex flex-col flex-1 min-w-0">
         <SiteHeader onToggleSideChat={toggleSideChat} />
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Route-specific content will be rendered here */}

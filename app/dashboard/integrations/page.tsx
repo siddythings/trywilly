@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Grid, Link2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Minimal Integration type for this file
 interface Integration {
@@ -25,6 +26,18 @@ export default function IntegrationsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [search, setSearch] = useState("");
+    const [category, setCategory] = useState("All");
+
+    // Compute unique categories from integrations
+    const categories = React.useMemo(() => {
+        const cats = new Set<string>();
+        integrations.forEach(integration => {
+            integration.meta?.categories?.forEach(cat => {
+                cats.add(cat.name);
+            });
+        });
+        return ["All", ...Array.from(cats).sort()];
+    }, [integrations]);
 
     useEffect(() => {
         setLoading(true);
@@ -85,16 +98,20 @@ export default function IntegrationsPage() {
                 {error && <div className="text-red-500">{error}</div>}
                 {!loading && !error && (
                     <div className="w-full px-4 h-[700px] overflow-y-auto pb-8 scrollbar-none">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center items-stretch gap-8">
+                        <div
+                          className="grid gap-8"
+                          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}
+                        >
                             {integrations
                                 .filter((integration) =>
-                                    integration.name.toLowerCase().includes(search.toLowerCase()) ||
-                                    integration.meta.description.toLowerCase().includes(search.toLowerCase())
+                                    (category === "All" || integration.meta.categories.some(cat => cat.name === category)) &&
+                                    (integration.name.toLowerCase().includes(search.toLowerCase()) ||
+                                    integration.meta.description.toLowerCase().includes(search.toLowerCase()))
                                 )
                                 .map((integration) => (
                                     <Card
                                         key={typeof integration._id === 'object' && integration._id !== null && '$oid' in integration._id ? integration._id.$oid : integration._id}
-                                        className="rounded-2xl shadow border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col min-w-[240px] max-w-[320px] w-full min-h-[220px] p-4"
+                                        className="rounded-2xl shadow border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col min-w-[240px] max-w-[320px] min-h-[220px] p-4"
                                     >
                                         {/* Top Row: Logo, Name */}
                                         <div>
