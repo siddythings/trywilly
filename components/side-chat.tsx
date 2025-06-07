@@ -116,6 +116,10 @@ export function SideChat() {
   const [chatId, setChatId] = useState<string>("");
   const [recentChats, setRecentChats] = useState<Conversation[]>([]);
   const [isRecentLoading, setIsRecentLoading] = useState(false);
+  const [showIntegrationsMention, setShowIntegrationsMention] = useState(false);
+  const [mentionSearch, setMentionSearch] = useState("");
+  // Add a ref to suppress reopening the mention modal after selection
+  const justClosedMentionRef = useRef(false);
 
   // On mount, load chatId from localStorage if available
   useEffect(() => {
@@ -705,7 +709,7 @@ export function SideChat() {
 
       {/* Input area */}
       <form className="sticky bottom-0 left-0 w-full border-t px-4 pt-3 pb-2 z-10" onSubmit={handleSend}>
-        <div className="rounded-xl border shadow bg-background p-4 flex flex-col gap-2">
+        <div className="rounded-xl border shadow bg-background p-4 flex flex-col gap-2 relative">
           {/* Input */}
           <textarea
             rows={1}
@@ -718,9 +722,87 @@ export function SideChat() {
               const textarea = e.target as HTMLTextAreaElement;
               textarea.style.height = '28px'; // reset to 1 line
               textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+
+              // Suppress mention modal if just closed
+              if (justClosedMentionRef.current) {
+                justClosedMentionRef.current = false;
+                setShowIntegrationsMention(false);
+                setMentionSearch("");
+                return;
+              }
+
+              // Detect "@" for mention
+              const cursorPos = textarea.selectionStart;
+              const value = e.target.value;
+              // Find the last @ before the cursor
+              const lastAt = value.lastIndexOf("@", cursorPos - 1);
+              // Only show modal if cursor is directly after @ or after @mention (no space/punctuation in between)
+              if (
+                lastAt !== -1 &&
+                (lastAt === 0 || /\s/.test(value[lastAt - 1])) &&
+                /^\w*$/.test(value.slice(lastAt + 1, cursorPos))
+              ) {
+                const afterAt = value.slice(lastAt + 1, cursorPos);
+                setShowIntegrationsMention(true);
+                setMentionSearch(afterAt);
+              } else {
+                setShowIntegrationsMention(false);
+                setMentionSearch("");
+              }
             }}
             onKeyDown={handleInputKeyDown}
             disabled={isLoading}
+          />
+          {/* Mention Modal (positioned above input) */}
+          <IntegrationsMentionModal
+            open={showIntegrationsMention}
+            onClose={() => setShowIntegrationsMention(false)}
+            connectIntegration={connectIntegration}
+            search={mentionSearch}
+            onSelectIntegration={(integration) => {
+              // Always get the textarea DOM element and its value/cursor
+              const textareaEl = document.querySelector('textarea');
+              if (textareaEl) {
+                const value = textareaEl.value;
+                const cursorPos = textareaEl.selectionStart;
+                // Find the @mention boundaries using regex
+                let atIdx = -1;
+                for (let i = cursorPos - 1; i >= 0; i--) {
+                  if (value[i] === '@' && (i === 0 || /\s/.test(value[i - 1]))) {
+                    atIdx = i;
+                    break;
+                  }
+                  // Stop if a space or punctuation is found before @
+                  if (!/\w/.test(value[i]) && value[i] !== '@') break;
+                }
+                if (atIdx !== -1) {
+                  // Find the end of the mention (first non-word character after @ or end of string)
+                  let mentionEnd = atIdx + 1;
+                  while (mentionEnd < value.length && /\w/.test(value[mentionEnd])) {
+                    mentionEnd++;
+                  }
+                  const before = value.slice(0, atIdx);
+                  const after = value.slice(mentionEnd);
+                  // If there's already a space after the mention, don't add another
+                  const needsSpace = after.length === 0 || after[0] !== ' ';
+                  const newValue = before + '@' + integration.name + (needsSpace ? ' ' : '') + after;
+                  justClosedMentionRef.current = true;
+                  setInput(newValue);
+                  setShowIntegrationsMention(false);
+                  setMentionSearch("");
+                  // Refocus textarea and set cursor after the inserted integration name
+                  setTimeout(() => {
+                    textareaEl.focus();
+                    const newCursor = (before + '@' + integration.name + (needsSpace ? ' ' : '')).length;
+                    textareaEl.setSelectionRange(newCursor, newCursor);
+                  }, 0);
+                }
+              } else {
+                justClosedMentionRef.current = true;
+                setShowIntegrationsMention(false);
+                setMentionSearch("");
+              }
+            }}
           />
           {/* Checkbox */}
           <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none mb-1">
@@ -847,6 +929,88 @@ function IntegrationsModal({ open, onClose, connectIntegration }: { open: boolea
           >
             Close
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Update IntegrationsMentionModal to be absolutely positioned above the input box, not full screen
+function IntegrationsMentionModal({ open, onClose, connectIntegration, search, onSelectIntegration }: { open: boolean, onClose: () => void, connectIntegration: (provider: string) => void, search: string, onSelectIntegration: (integration: Integration) => void }) {
+  const [integrations, setIntegrations] = React.useState<Integration[]>([]);
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!open) return;
+    setLoading(true);
+    const userData = JSON.parse(localStorage.getItem("user") || "{}")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/get-integrations`, {
+      headers: {
+        'Authorization': `Bearer ${userData.data.access_token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setIntegrations(data.data || []);
+      })
+      .catch(() => setIntegrations([]))
+      .finally(() => setLoading(false));
+  }, [open]);
+
+  // Filter integrations by search
+  const filtered = search
+    ? integrations.filter(i => i.name.toLowerCase().includes(search.toLowerCase()))
+    : integrations;
+
+  if (!open) return null;
+
+  return (
+    <div
+      className="absolute left-0 bottom-full mb-2 z-50"
+      style={{ width: 320, maxWidth: '90vw', maxHeight: 260 }}
+    >
+      <div className="bg-popover text-popover-foreground rounded-2xl shadow-2xl border border-border w-full max-h-64 overflow-y-auto">
+        <div className="flex items-center justify-between px-4 pt-3 pb-2">
+          <h2 className="text-base font-semibold text-foreground">Mention Integration</h2>
+          <button
+            className="text-muted-foreground hover:text-foreground text-2xl font-bold"
+            onClick={onClose}
+            aria-label="Close"
+            type="button"
+          >
+            ×
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-4 pb-4 min-h-0">
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <span className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></span>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-muted-foreground text-xs py-2">No integrations found</div>
+          ) : (
+            filtered.map((integration) => (
+              <div
+                key={integration.name}
+                className="flex items-center bg-card rounded-lg border border-border mb-2 px-3 py-2 shadow-sm cursor-pointer hover:bg-accent"
+                onClick={() => onSelectIntegration(integration)}
+              >
+                <img src={integration.meta.logo} alt={integration.name} className="w-6 h-6 rounded mr-3 object-contain" />
+                <span className="flex-1 text-base font-medium text-foreground">{integration.name}</span>
+                {integration.connected ? (
+                  <span className="bg-muted text-foreground border border-border rounded px-2 py-0.5 text-xs font-medium min-h-0">Connected</span>
+                ) : (
+                  <button
+                    className="bg-primary text-primary-foreground rounded px-2 py-0.5 text-xs font-medium hover:bg-primary/90 transition min-h-0"
+                    onClick={e => {
+                      e.stopPropagation();
+                      if (integration.provider) connectIntegration(integration.provider);
+                    }}
+                  >Connect</button>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
