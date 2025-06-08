@@ -188,6 +188,7 @@ export function SideChat() {
   };
 
   const handleToolUse = async (toolUse: ToolUse, messageHistory: Message[]): Promise<unknown | undefined> => {
+    setIsLoading(true);
     try {
       // Make API call to get tool results
       const userData = JSON.parse(localStorage.getItem("user") || "{}")
@@ -230,6 +231,8 @@ export function SideChat() {
         text: "Sorry, there was an error executing the tool."
       }]);
       return undefined;
+    } finally {
+      setIsLoading(false);
     }
   };
   const connectIntegration = async (provider: string) => {
@@ -261,7 +264,6 @@ export function SideChat() {
     }
 
     try {
-      setIsLoading(true);
       const userData = JSON.parse(localStorage.getItem("user") || "{}")
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/stream`, {
         method: 'POST',
@@ -362,7 +364,6 @@ export function SideChat() {
       }
       return null;
     } finally {
-      setIsLoading(false);
       abortControllerRef.current = null;
     }
   };
@@ -374,28 +375,32 @@ export function SideChat() {
     currentChatIdOverride?: string,
     tools: unknown[] = []
   ) => {
-    let nextUserMessage = userMessage;
-    let nextHistory = existingHistory;
-    let nextTools = tools;
-    let currentChatId = currentChatIdOverride;
+    setIsLoading(true);
+    try {
+      let nextUserMessage = userMessage;
+      let nextHistory = existingHistory;
+      let nextTools = tools;
+      const currentChatId = currentChatIdOverride;
 
-    while (true) {
-      const result = await streamChat(nextUserMessage, nextHistory, currentChatId, nextTools);
-      if (result && result.toolUse) {
-        const toolResult = await handleToolUse(result.toolUse, result.messageHistory);
-        if (result.toolUse.name === "tool_finder" && toolResult !== undefined) {
-          // For tool_finder, pass tool result as tools array
-          nextUserMessage = "";
-          nextHistory = result.messageHistory;
-          nextTools = toolResult as unknown[] || [];
-          // Continue loop
+      while (true) {
+        const result = await streamChat(nextUserMessage, nextHistory, currentChatId, nextTools);
+        if (result && result.toolUse) {
+          const toolResult = await handleToolUse(result.toolUse, result.messageHistory);
+          if (result.toolUse.name === "tool_finder" && toolResult !== undefined) {
+            nextUserMessage = "";
+            nextHistory = result.messageHistory;
+            nextTools = toolResult as unknown[] || [];
+            // Continue loop
+          } else {
+            // For other tools, handleToolUse already called streamChatLoop recursively
+            break;
+          }
         } else {
-          // For other tools, handleToolUse already called streamChatLoop recursively
           break;
         }
-      } else {
-        break;
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
