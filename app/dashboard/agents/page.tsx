@@ -1604,7 +1604,7 @@ export default function AgentsPage() {
                 ,
             }),
         })
-        router.push(`/dashboard/agents/new/${id}`);
+        router.push(`/dashboard/agents/new?_id=${id}`);
     }
 
     useEffect(() => {
