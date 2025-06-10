@@ -204,9 +204,9 @@ export function SideChat() {
         })
       });
 
-      if (!toolResponse.ok) {
-        throw new Error('Tool execution failed');
-      }
+      // if (!toolResponse.ok) {
+      //   throw new Error('Tool execution failed');
+      // }
 
       const toolResult = await toolResponse.json();
 
@@ -215,10 +215,11 @@ export function SideChat() {
         return toolResult.data;
       } else {
         // Default behavior for other tools: update history and return undefined
+        console.log("Tool result:", toolResult);
         const updatedHistory: Message[] = [
           ...messageHistory,
           { role: "assistant", content: JSON.stringify(toolUse) },
-          { role: "user", content: JSON.stringify(toolResult.data) }
+          { role: "user", content: JSON.stringify(toolResult) }
         ];
         // Call streamChatLoop recursively for this tool result
         await streamChatLoop("", updatedHistory);
@@ -262,6 +263,9 @@ export function SideChat() {
     if (userMessage) {
       messageHistory.push({ role: "user", content: userMessage });
     }
+
+    // Log the message history before sending to API
+    console.log("Sending message history to API:", messageHistory);
 
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}")
@@ -330,6 +334,11 @@ export function SideChat() {
                   console.error("Failed to save assistant message to RTDB", err);
                 }
               }
+
+              // Append assistant response to messageHistory
+              messageHistory.push({ role: "assistant", content: currentText });
+              // Log the updated messageHistory
+              console.log("Updated message history after assistant response:", messageHistory);
 
               // Handle tool use if that's why the message stopped
               if (messageStop.message.stop_reason === 'tool_use') {
@@ -911,7 +920,7 @@ function IntegrationsModal({ open, onClose, connectIntegration }: { open: boolea
           ) : (
             integrations.map((integration) => (
               <div key={integration.name} className="flex items-center bg-card rounded-lg border border-border mb-3 px-3 py-2 shadow-sm">
-                <img src={integration.icon} alt={integration.name} className="w-7 h-7 rounded mr-3 object-contain" />
+                <img src={integration.meta.logo} alt={integration.name} className="w-7 h-7 rounded mr-3 object-contain" />
                 <span className="flex-1 text-base font-medium text-foreground">{integration.name}</span>
                 {integration.connected ? (
                   <button className="bg-muted text-foreground border border-border rounded px-2 py-0.5 text-xs font-medium hover:bg-accent hover:text-accent-foreground transition min-h-0">Disconnect</button>
