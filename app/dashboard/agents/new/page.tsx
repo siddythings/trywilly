@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
 import { useSideChat } from "@/components/side-chat"
 import type { Content, JSONContent } from "@tiptap/react"
+import { toast } from "sonner"
 export default function NewAgentPage() {
   // const editorRef = useRef<any>(null)
   const { sendMessage } = useSideChat()
@@ -64,6 +65,7 @@ export default function NewAgentPage() {
         }),
       })
       if (!res.ok) throw new Error("Failed to save agent")
+      toast("Agent saved successfully!")
       // alert("Agent saved successfully!")
     } catch (err) {
       alert("Error saving agent: " + String(err))
@@ -105,7 +107,7 @@ export default function NewAgentPage() {
         {/* Schedule bar */}
         <div className="flex items-center justify-between border-b border-muted py-2 mb-6">
           <div className="flex items-center gap-2 text-muted-foreground text-lg">
-            <span className="mr-1">
+            {/* <span className="mr-1">
               <svg xmlns="http://www.w3.org/2000/svg" className="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             </span>
             Run every
@@ -126,14 +128,14 @@ export default function NewAgentPage() {
               <option value="3:00pm">3:00pm</option>
               <option value="4:00pm">4:00pm</option>
               <option value="5:00pm">5:00pm</option>
-            </select>
+            </select>*/}
           </div>
           <div className="flex items-center gap-1">
             <button className="border rounded-md px-2 py-0.5 text-sm font-medium flex items-center gap-1" onClick={handleTest}>
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polygon points="8,5 19,12 8,19" fill="currentColor" /></svg>
               Test
             </button>
-            <button className="border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-md px-3 py-0.5 text-sm font-semibold" onClick={handleSchedule}>Schedule</button>
+            {/*<button className="border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-md px-3 py-0.5 text-sm font-semibold" onClick={handleSchedule}>Schedule</button>*/}
             <button className="border border-green-600 text-green-600 hover:bg-green-50 rounded-md px-3 py-0.5 text-sm font-semibold" onClick={handleSave}>Save</button>
           </div>
         </div>
